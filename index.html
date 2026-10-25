@@ -1,0 +1,1032 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ORBIT Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Orbit connects video production, creative direction, website development and practical AI solutions for ambitious businesses.">
+<meta property="og:title" content="Orbit | Creative Technology Studio">
+<meta property="og:description" content="Creative thinking. Engineered differently.">
+<meta name="theme-color" content="#080a12">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout concept: one fixed WebGL orbit system sits behind every page; copy is left-aligned in wide editorial columns,
+   the 3D object holds the right half of each hero and changes with the route (planet core, film reel, knot, layers, network, logo). */
+:root{
+  --bg:#080a12; --graphite:#171b2a; --panel:#0e1220; --violet:#8b72ff; --violet-2:#b3a3ff; --cyan:#00d9ff;
+  --ice:#f4f6fc; --silver:#9ca3b7; --line:rgba(244,246,252,.13); --band:rgba(8,10,18,.82);
+  --display:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --gx:max(18px,5.6vw); --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{margin:0;background:var(--bg);color:var(--ice);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+h1,h2,h3,h4{font-family:var(--display);font-weight:500;margin:0;text-wrap:balance}
+p{margin:0}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:2px}
+::selection{background:var(--violet);color:#fff}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* 3D canvas */
+#gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;transition:opacity .8s}
+.no-webgl #gl{display:none}
+.no-webgl body{background:radial-gradient(60% 50% at 75% 30%,#2a2160 0,#080a12 70%)}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+#progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--violet),var(--cyan));z-index:61}
+
+/* loader */
+#loader{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;transition:transform .9s var(--ease),opacity .4s .6s}
+#loader.done{transform:translateY(-100%);opacity:0;pointer-events:none}
+.ld{display:grid;justify-items:center;gap:22px}
+.ld svg{width:112px;height:112px;overflow:visible}
+.ld .r1,.ld .r2{fill:none;stroke-width:1.6;stroke-dasharray:400;stroke-dashoffset:400;animation:draw 1.3s var(--ease) forwards}
+.ld .r1{stroke:var(--ice)} .ld .r2{stroke:var(--violet);animation-delay:.25s}
+.ld .dot{fill:var(--cyan);opacity:0;animation:fade .4s 1s forwards}
+.ld .word{font:600 28px var(--display);letter-spacing:.42em;margin-right:-.42em;opacity:0;animation:fade .8s .7s forwards}
+.ld .bar{width:140px;height:1px;background:var(--line);position:relative;overflow:hidden}
+.ld .bar i{position:absolute;inset:0;background:var(--cyan);transform:translateX(-100%);animation:load 1.5s .2s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}} @keyframes fade{to{opacity:1}} @keyframes load{to{transform:none}}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;height:74px;display:flex;align-items:center;gap:28px;padding-left:max(var(--gx),env(safe-area-inset-left,0px));padding-right:max(var(--gx),env(safe-area-inset-right,0px));background:rgba(8,10,18,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font:600 22px var(--display);letter-spacing:.2em}
+.logo svg{width:34px;height:34px;overflow:visible}
+.logo sup{font:500 9px var(--mono);letter-spacing:0;color:var(--cyan);margin-left:-6px;align-self:flex-start;margin-top:6px}
+.mark .ring{fill:none;stroke:var(--ice);stroke-width:2.4}
+.mark .orb{fill:none;stroke:var(--violet);stroke-width:1.6}
+.mark .node{fill:var(--cyan)}
+.nav{margin-left:auto;display:flex;align-items:center;gap:26px;font-size:14px;color:#cfd2e0}
+.nav a,.nav button{position:relative;padding:6px 0}
+.nav>a:not(.cta)::after,.dd>button::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.nav>a:hover::after,.nav>a.on::after,.dd:hover>button::after,.dd>button.on::after{transform:scaleX(1)}
+.nav a.on,.dd>button.on{color:var(--ice)}
+.dd{position:relative}
+.dd-menu{position:absolute;top:100%;left:-18px;min-width:280px;padding:10px;margin-top:12px;background:#0d1120;border:1px solid var(--line);opacity:0;visibility:hidden;transform:translateY(8px);transition:.25s var(--ease)}
+.dd:hover .dd-menu,.dd:focus-within .dd-menu{opacity:1;visibility:visible;transform:none}
+.dd-menu::before{content:"";position:absolute;top:-14px;left:0;right:0;height:14px}
+.dd-menu a{display:block;padding:11px 12px;font-size:14px}
+.dd-menu a small{display:block;color:var(--silver);font-size:12px}
+.dd-menu a:hover{background:rgba(139,114,255,.12)}
+.btn{display:inline-flex;align-items:center;gap:22px;padding:15px 20px;background:var(--violet);color:#fff;font:600 14px var(--display);letter-spacing:.01em;transition:transform .3s var(--ease),background .3s,box-shadow .3s;position:relative}
+.btn span{color:var(--cyan);font-size:18px;line-height:1;transition:transform .3s var(--ease)}
+.btn:hover{background:#7a5cff;transform:translateY(-2px);box-shadow:0 12px 40px -10px #8b72ff99}
+.btn:hover span{transform:translate(3px,-3px)}
+.btn.ghost{background:transparent;border:1px solid #6b5cc9}
+.btn.ghost:hover{background:rgba(139,114,255,.18)}
+.nav .cta{padding:11px 16px;font-size:13px}
+.link{font:500 14px var(--display);display:inline-flex;gap:8px;align-items:center;border-bottom:1px solid transparent;padding-bottom:2px}
+.link span{color:var(--cyan);transition:transform .3s var(--ease)}
+.link:hover{border-color:var(--cyan)} .link:hover span{transform:translateX(4px)}
+.burger{display:none;margin-left:auto;padding:10px 14px;border:1px solid var(--line);font:500 11px var(--mono);letter-spacing:.1em}
+
+/* layout helpers */
+.wrap{padding-left:max(var(--gx),env(safe-area-inset-left,0px));padding-right:max(var(--gx),env(safe-area-inset-right,0px))}
+.band{background:var(--band);padding-block:clamp(72px,10vw,140px)}
+.band.alt{background:rgba(12,15,26,.9)}
+.mono{font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--silver)}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.18em;color:var(--cyan);text-transform:uppercase}
+.kick{display:flex;align-items:center;gap:16px;margin-bottom:clamp(28px,4vw,56px)}
+.kick i{flex:1;height:1px;background:var(--line)}
+h2.big{font-size:clamp(38px,5.6vw,84px);letter-spacing:-.05em;line-height:1}
+h2.mid{font-size:clamp(32px,4.2vw,60px);letter-spacing:-.045em;line-height:1.04}
+h3.sm{font-size:clamp(22px,2.2vw,30px);letter-spacing:-.03em}
+.lead{font-size:clamp(16px,1.35vw,19px);line-height:1.75;color:#b9bdcf;max-width:56ch}
+.muted{color:var(--silver)}
+.grad{background:linear-gradient(100deg,var(--violet-2),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* pages */
+.page{position:relative;z-index:1;min-height:70vh}
+.page[hidden]{display:none}
+.page.enter>*{animation:pin .7s var(--ease) both}
+@keyframes pin{from{opacity:0;transform:translateY(14px)}}
+.reveal{opacity:.55;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* hero */
+.hero{min-height:calc(100svh - 74px);display:flex;flex-direction:column;justify-content:space-between;padding-top:clamp(28px,4vw,56px);padding-bottom:22px}
+.hero.short{min-height:min(78svh,760px)}
+.hero-main{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);align-items:center;flex:1;padding-block:clamp(30px,5vw,70px)}
+.hero h1{font-size:clamp(46px,7.6vw,120px);line-height:.92;letter-spacing:-.06em;margin:26px 0 30px}
+.hero.short h1{font-size:clamp(40px,6vw,92px)}
+.ln{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+.ln>span{display:inline-block;transform:translateY(110%);animation:rise 1.1s var(--ease) forwards;animation-delay:calc(var(--i,0)*.1s + .15s)}
+@keyframes rise{to{transform:none}}
+.out{-webkit-text-stroke:1.2px #b6b9d8;color:transparent}
+.hero p.lead{margin-bottom:34px}
+.acts{display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px}
+.svc-labels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--line)}
+.svc-labels a{padding:18px 18px 8px 0;display:block;transition:color .3s}
+.svc-labels a b{display:block;font:600 16px var(--display);margin-bottom:2px}
+.svc-labels a small{color:var(--silver);font-size:13px;line-height:1.4;display:block}
+.svc-labels a:hover b{color:var(--cyan)}
+.hint{display:flex;justify-content:space-between;gap:20px;padding-top:12px}
+.hint i{display:inline-block;width:1px;height:22px;background:var(--cyan);vertical-align:middle;margin-right:10px;animation:cue 1.8s ease-in-out infinite;transform-origin:top}
+@keyframes cue{50%{transform:scaleY(.3)}}
+
+/* problem */
+.split{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(30px,8vw,120px);align-items:start}
+.probs{list-style:none;padding:0;margin:44px 0 0;border-top:1px solid var(--line)}
+.probs li{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:24px;padding:22px 0;border-bottom:1px solid var(--line)}
+.probs b{font:500 20px var(--display);letter-spacing:-.02em}
+.probs span{color:var(--silver);font-size:15px}
+.eq{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin-top:50px;padding-top:22px;border-top:1px solid var(--line);font:500 12px var(--mono);letter-spacing:.1em;color:#b4b8cb}
+.eq b{color:var(--violet);font-size:16px} .eq .res{color:var(--ice)}
+
+/* service cards */
+.cards4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:50px}
+.card{position:relative;padding:28px 24px 26px;background:linear-gradient(160deg,rgba(23,27,42,.95),rgba(13,16,29,.95));border:1px solid var(--line);display:flex;flex-direction:column;gap:14px;min-height:410px;transform-style:preserve-3d;transition:transform .25s ease-out,border-color .3s,box-shadow .4s;will-change:transform}
+.card::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(260px circle at var(--mx,50%) var(--my,0%),rgba(139,114,255,.22),transparent 60%);opacity:0;transition:opacity .3s}
+.card:hover{border-color:#5b4fb5;box-shadow:0 30px 70px -30px #8b72ffaa}
+.card:hover::after{opacity:1}
+.card .ico{width:64px;height:64px;margin-bottom:10px;transform:translateZ(40px)}
+.card h3{font-size:26px;letter-spacing:-.04em;transform:translateZ(24px)}
+.card h3 em{font-style:normal;color:#aeb2c7}
+.card p{color:#b4b8cb;font-size:15px;line-height:1.65}
+.card .del{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--silver)}
+.card .go{display:flex;justify-content:space-between;color:var(--cyan);font:500 13px var(--display)}
+.ico *{fill:none;stroke-width:1.6}
+.ico .v{stroke:var(--violet)} .ico .c{stroke:var(--cyan)} .ico .w{stroke:var(--ice)}
+.sp{animation:spin 14s linear infinite;transform-origin:32px 32px} .sp2{animation:spin 9s linear infinite reverse;transform-origin:32px 32px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* work */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:34px 0 40px}
+.chip{padding:10px 16px;border:1px solid var(--line);font:500 13px var(--display);color:#c3c6d8;transition:.25s}
+.chip:hover{border-color:var(--violet)}
+.chip[aria-pressed=true]{background:var(--violet);border-color:var(--violet);color:#fff}
+.wgrid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:30px 22px}
+.wgrid .proj{grid-column:span 2}
+.wgrid .proj:nth-child(1){grid-column:span 4}
+.wgrid.few .proj{grid-column:span 3}
+.proj a.vis{display:block;position:relative;overflow:hidden;aspect-ratio:1.35;border:1px solid var(--line);background:#12162a;transition:transform .3s ease-out,border-color .3s;transform-style:preserve-3d}
+.proj:nth-child(1) a.vis{aspect-ratio:2.1}
+.wgrid.few .proj:nth-child(1) a.vis{aspect-ratio:1.35}
+.proj a.vis:hover{border-color:#5b4fb5}
+.cap{display:flex;justify-content:space-between;gap:16px;padding-top:14px}
+.tag{font:500 11px var(--mono);letter-spacing:.1em;color:var(--cyan);text-transform:uppercase}
+.cap h3{font-size:24px;letter-spacing:-.04em;margin-top:6px}
+.cap p{color:var(--silver);font-size:14px;max-width:210px;line-height:1.55;padding-top:20px}
+.vtl{position:absolute;top:14px;left:16px;right:16px;display:flex;justify-content:space-between;font:500 10px var(--mono);letter-spacing:.1em;color:#c5c8da;z-index:3}
+.art{position:absolute;inset:0;display:grid;place-items:center}
+.a-brand{background:radial-gradient(ellipse at 50% 50%,#2a2554 0,#10142a 55%,#080a12 100%)}
+.a-brand .o{font:500 clamp(110px,16vw,240px)/1 var(--display);letter-spacing:-.1em;color:#cbc3ff;text-shadow:0 0 70px #8b72ff88;animation:breathe 6s ease-in-out infinite}
+.a-brand::before,.a-brand::after{content:"";position:absolute;border:1px solid #8b72ff66;border-radius:50%;width:70%;aspect-ratio:1;transform:rotate(-30deg) scaleY(.4);animation:orbitz 18s linear infinite}
+.a-brand::after{width:90%;border-color:#00d9ff55;transform:rotate(40deg) scaleY(.5);animation-duration:26s;animation-direction:reverse}
+@keyframes orbitz{to{rotate:360deg}} @keyframes breathe{50%{transform:scale(1.04)}}
+.a-dig{background:#e8e8e3;color:#171b2a}
+.bf{width:76%;height:72%;background:#f7f7f3;box-shadow:0 20px 60px #0004;transform:rotate(-4deg);transition:transform .5s var(--ease);position:relative;overflow:hidden}
+.proj a.vis:hover .bf{transform:rotate(0) scale(1.03)}
+.bf .bar{height:24px;border-bottom:1px solid #ddd;display:flex;gap:4px;align-items:center;padding:0 9px}
+.bf .bar i{width:5px;height:5px;border-radius:50%;background:#aaa}
+.bf .bd{padding:16px 18px}
+.bf small{font:500 8px var(--mono);letter-spacing:.1em;color:#666}
+.bf strong{display:block;font:600 clamp(20px,3vw,38px)/.95 var(--display);letter-spacing:-.06em;margin-top:14px}
+.bf strong em{font-style:normal;color:#8b72ff}
+.bf .bt{position:absolute;left:18px;bottom:16px;background:#171b2a;color:#fff;font:500 8px var(--mono);padding:8px 10px}
+.bf .sh{position:absolute;right:-24px;bottom:-26px;width:110px;height:110px;border-radius:50%;background:linear-gradient(140deg,#00d9ff,#8b72ff)}
+.a-ops{background:#0d1222;background-image:linear-gradient(#8b72ff12 1px,transparent 1px),linear-gradient(90deg,#8b72ff12 1px,transparent 1px);background-size:24px 24px}
+.flow{display:flex;align-items:center;gap:10px;font:500 10px var(--mono);color:#e8eaff;position:relative}
+.flow .bx{padding:14px 10px;border:1px solid #5a637d;background:#101523;text-align:center;min-width:64px}
+.flow .ai{border-color:var(--violet);background:#2a2250;color:#d5ccff;animation:glow 2.6s ease-in-out infinite}
+.flow .ar{color:var(--cyan);position:relative}
+@keyframes glow{50%{box-shadow:0 0 30px #8b72ff66}}
+.a-fnd{background:linear-gradient(135deg,#171b2a,#0b0e1a)}
+.fnd{display:flex;align-items:flex-end;gap:12px;height:62%}
+.fnd .main{width:150px;aspect-ratio:16/9;background:#232846;border:1px solid #3a4170;position:relative}
+.fnd .main::after{content:"";position:absolute;left:50%;top:50%;border:9px solid transparent;border-left:15px solid var(--cyan);transform:translate(-30%,-50%)}
+.fnd .v{width:44px;aspect-ratio:9/16;background:#2a2250;border:1px solid #5b4fb5}
+.fnd .v:nth-child(3){height:72%;aspect-ratio:9/16;background:#14323d;border-color:#0c7d93}
+.wv{position:absolute;left:12%;right:12%;bottom:13%;height:18px;display:flex;align-items:center;gap:3px}
+.wv i{flex:1;background:var(--violet);opacity:.7;border-radius:2px;animation:wave 1.4s ease-in-out infinite;animation-delay:calc(var(--k)*.07s)}
+@keyframes wave{50%{transform:scaleY(.25)}}
+.a-id{background:#0f1325}
+.idg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:70%}
+.idg>div{aspect-ratio:1;display:grid;place-items:center;font:600 34px var(--display);border:1px solid var(--line)}
+.idg .s1{background:var(--violet)} .idg .s2{background:var(--cyan);color:#08141a} .idg .s3{background:var(--ice);color:#171b2a}
+.idg .s4{background:#171b2a} .idg .s5{border-radius:50%} .idg .s6{background:linear-gradient(140deg,var(--violet),var(--cyan))}
+
+/* loop */
+.loop{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(30px,7vw,100px);align-items:center;margin-top:50px}
+.lp{position:relative;width:min(100%,470px);aspect-ratio:1;margin-inline:auto}
+.lp .rg{position:absolute;border-radius:50%;border:1px solid #8b72ff55}
+.lp .r1{inset:9%} .lp .r2{inset:25%;border:1px dashed #00d9ff44}
+.lp .sat{position:absolute;inset:9%;border-radius:50%;animation:spin 16s linear infinite}
+.lp .sat::after{content:"";position:absolute;top:-4px;left:calc(50% - 4px);width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 18px var(--cyan)}
+.lp .core{position:absolute;inset:38%;display:grid;place-items:center}
+.lp .core svg{width:100%;height:100%;overflow:visible}
+.lp button.nd{position:absolute;transform:translate(-50%,-50%);padding:9px 14px;background:var(--bg);border:1px solid var(--line);font:500 13px var(--display);transition:.3s var(--ease);display:flex;gap:8px;align-items:center}
+.lp button.nd i{font:500 10px var(--mono);color:var(--cyan);font-style:normal}
+.lp button.nd:hover{border-color:var(--violet)}
+.lp button.nd[aria-selected=true]{background:var(--violet);border-color:var(--violet);box-shadow:0 0 40px #8b72ff88;transform:translate(-50%,-50%) scale(1.08)}
+.lp button.nd[aria-selected=true] i{color:#fff}
+.ld-card{border-top:1px solid var(--line);padding-top:28px;min-height:260px}
+.ld-card h3{font-size:clamp(34px,4vw,56px);letter-spacing:-.05em;margin:14px 0 14px}
+.ld-card .out2{display:inline-flex;gap:12px;margin-top:24px;padding:12px 14px;border:1px solid var(--line);font-size:14px}
+.ld-card .out2 b{font:500 11px var(--mono);letter-spacing:.1em;color:var(--cyan);text-transform:uppercase;align-self:center}
+
+/* lists */
+.lst{list-style:none;padding:0;margin:44px 0 0;border-top:1px solid var(--line)}
+.lst li{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:20px 40px;padding:24px 0;border-bottom:1px solid var(--line);transition:padding .35s var(--ease),background .35s}
+.lst li:hover{padding-left:14px;background:linear-gradient(90deg,rgba(139,114,255,.1),transparent)}
+.lst b{font:500 clamp(19px,2vw,26px) var(--display);letter-spacing:-.03em}
+.lst span{color:#b4b8cb;max-width:60ch}
+.two{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(30px,7vw,110px)}
+.two .lst{margin-top:0}
+details.faq{border-bottom:1px solid var(--line)}
+details.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:20px;padding:22px 0;font:500 clamp(18px,1.8vw,23px) var(--display);letter-spacing:-.02em}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:"+";color:var(--cyan);font-size:26px;line-height:1;transition:transform .3s var(--ease)}
+details.faq[open] summary::after{transform:rotate(45deg)}
+details.faq p{padding:0 0 26px;color:#b4b8cb;max-width:70ch}
+.faqs{border-top:1px solid var(--line);margin-top:40px}
+
+/* final cta */
+.final{text-align:left}
+.final h2{font-size:clamp(44px,7vw,112px);letter-spacing:-.06em;line-height:.95;max-width:14ch;margin:22px 0 28px}
+.final .lead{margin-bottom:36px}
+.final .note{margin-top:28px}
+
+/* service rows (services page) */
+.srow{display:grid;grid-template-columns:70px minmax(0,1.1fr) minmax(0,1fr) 80px;gap:24px;align-items:center;padding:34px 0;border-bottom:1px solid var(--line);transition:padding .35s var(--ease),background .35s}
+.srow:first-child{border-top:1px solid var(--line)}
+.srow:hover{padding-left:16px;padding-right:16px;background:linear-gradient(90deg,rgba(139,114,255,.1),transparent)}
+.srow h3{font-size:clamp(28px,3.4vw,48px);letter-spacing:-.05em}
+.srow h3 em{font-style:normal;color:#aeb2c7}
+.srow .ar{font-size:30px;color:var(--cyan);justify-self:end;transition:transform .3s var(--ease)}
+.srow:hover .ar{transform:translate(4px,-4px)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;margin-top:46px;border-top:1px solid var(--line)}
+.steps>div{padding:22px 22px 10px 0;position:relative}
+.steps>div::before{content:"";position:absolute;top:-4px;left:0;width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+.steps b{display:block;font:500 11px var(--mono);letter-spacing:.1em;color:var(--cyan);margin:10px 0 8px}
+.steps p{color:#c3c6d8;font-size:15px;line-height:1.55}
+.tbl{width:100%;border-collapse:collapse;margin-top:40px}
+.tbl th,.tbl td{text-align:left;padding:20px 16px 20px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.tbl thead th{font:500 11px var(--mono);letter-spacing:.1em;color:var(--silver);text-transform:uppercase;border-bottom-color:#2a3050}
+.tbl td:first-child{font:500 19px var(--display);white-space:nowrap}
+.tbl td{color:#b9bdcf;font-size:15px}
+.tblwrap{overflow-x:auto}
+.crumb{display:flex;gap:10px;font:500 12px var(--mono);letter-spacing:.06em;color:var(--silver);padding-top:30px}
+.crumb a:hover{color:var(--cyan)}
+.note-box{margin-top:40px;padding:20px 22px;border:1px solid var(--line);background:rgba(17,21,38,.8);color:#b9bdcf;font-size:14.5px;max-width:78ch}
+.note-box b{color:var(--ice);font-weight:500}
+.flowline{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin-top:44px;font:500 13px var(--mono);letter-spacing:.06em}
+.flowline span{padding:10px 14px;border:1px solid var(--line)}
+.flowline i{color:var(--cyan);font-style:normal}
+.cta-band{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:40px;align-items:end;padding:clamp(28px,4vw,56px);border:1px solid #3b3480;background:linear-gradient(135deg,rgba(139,114,255,.18),rgba(0,217,255,.05))}
+.cta-band h3{font-size:clamp(28px,3.4vw,46px);letter-spacing:-.04em;line-height:1.05;margin-bottom:14px}
+.cta-band p{color:#c3c6d8;max-width:52ch}
+.rel{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:30px}
+
+/* case study */
+.cs-hero{aspect-ratio:2.2;position:relative;overflow:hidden;border:1px solid var(--line);margin-top:34px}
+.cs-grid{display:grid;grid-template-columns:minmax(0,.7fr) minmax(0,1.3fr);gap:clamp(24px,6vw,90px);margin-top:60px}
+.cs-side{display:grid;gap:26px;align-content:start}
+.cs-side h4{font:500 11px var(--mono);letter-spacing:.1em;color:var(--silver);text-transform:uppercase;margin-bottom:10px}
+.cs-side ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.cs-side li{padding-bottom:8px;border-bottom:1px solid var(--line);font-size:15px}
+.cs-body section{padding-bottom:36px}
+.cs-body h3{font-size:clamp(24px,2.6vw,34px);letter-spacing:-.04em;margin-bottom:10px}
+.cs-body p{color:#b9bdcf;max-width:62ch}
+
+/* about */
+.vals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--line);margin-top:44px}
+.vals>div{padding:28px 26px 30px 0;border-bottom:1px solid var(--line)}
+.vals b{display:block;font:500 24px var(--display);letter-spacing:-.03em;margin-bottom:8px}
+.vals span{color:#b4b8cb;font-size:15px}
+.team{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:40px}
+.team>div{padding:24px;border:1px solid var(--line);background:rgba(17,21,38,.7)}
+.team b{display:block;font:500 20px var(--display);margin:10px 0 8px}
+.team p{color:#b4b8cb;font-size:14.5px}
+
+/* contact */
+.cgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(30px,7vw,110px);align-items:start}
+form.f{border:1px solid var(--line);padding:clamp(22px,3vw,38px);background:rgba(11,14,26,.92)}
+.f .row{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
+.fld{display:block;margin-bottom:22px}
+.fld>span{display:block;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#a9afc4}
+.fld input,.fld select,.fld textarea{display:block;width:100%;margin-top:8px;padding:11px 0;background:transparent;color:var(--ice);border:0;border-bottom:1px solid #343a50;border-radius:0;font:16px var(--body);outline:none;transition:border-color .25s}
+.fld select option{background:#111522}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--cyan)}
+.fld .er{display:none;margin-top:6px;font-size:13px;color:#ff8da1}
+.fld.bad .er{display:block} .fld.bad input,.fld.bad select{border-color:#ff6b86}
+.chk{display:flex;gap:12px;align-items:flex-start;font-size:14px;color:#b4b8cb;margin-bottom:22px}
+.chk input{margin-top:5px;accent-color:var(--violet);width:16px;height:16px}
+.chk a{color:var(--cyan);border-bottom:1px solid #00d9ff66}
+.ok{display:none;padding:30px;border:1px solid #0c7d93;background:rgba(0,217,255,.06)}
+.ok.show{display:block}
+.ok h3{font-size:28px;margin-bottom:10px}
+.contactline{margin-top:40px;display:grid;gap:14px;border-top:1px solid var(--line);padding-top:24px}
+.contactline div{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:15px}
+.contactline .mono{min-width:90px}
+.copy{padding:6px 10px;border:1px solid var(--line);font:500 11px var(--mono)}
+
+/* legal */
+.legal{max-width:760px}
+.legal h2{font:500 26px var(--display);letter-spacing:-.03em;margin:40px 0 10px}
+.legal p,.legal li{color:#b9bdcf}
+.legal ul{padding-left:20px}
+
+/* footer */
+.foot{position:relative;z-index:1;background:#05060b;border-top:1px solid var(--line);padding-top:60px;padding-bottom:26px}
+.fg{display:grid;grid-template-columns:1.3fr repeat(3,minmax(0,1fr));gap:36px}
+.fg h4{font:500 11px var(--mono);letter-spacing:.12em;color:var(--silver);text-transform:uppercase;margin-bottom:16px}
+.fg ul{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:15px;color:#cfd2e0}
+.fg a:hover{color:var(--cyan)}
+.fg .tag2{font:500 clamp(22px,2.4vw,32px) var(--display);letter-spacing:-.04em;line-height:1.1;margin-top:20px;max-width:12ch}
+.fb{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;margin-top:50px;padding-top:20px;border-top:1px solid var(--line);font:500 11px var(--mono);letter-spacing:.06em;color:#7e86a0}
+.fb a:hover{color:var(--cyan)}
+
+/* responsive */
+@media(max-width:1000px){
+  .cards4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .svc-labels{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .hero-main{grid-template-columns:1fr}
+  .hero-main>div:first-child{max-width:640px}
+  .split,.two,.loop,.cgrid,.cs-grid,.cta-band{grid-template-columns:1fr}
+  .wgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wgrid .proj,.wgrid .proj:nth-child(1){grid-column:span 1}
+  .wgrid .proj:nth-child(1){grid-column:span 2}
+  .vals,.team{grid-template-columns:1fr 1fr}
+  .fg{grid-template-columns:1fr 1fr}
+  .srow{grid-template-columns:44px minmax(0,1fr) 40px}
+  .srow .dt{display:none}
+}
+@media(max-width:760px){
+  .top{height:66px}
+  .burger{display:block}
+  .nav{display:none;position:fixed;top:calc(66px + env(safe-area-inset-top,0px));left:0;right:0;bottom:0;margin:0;padding:22px max(18px,env(safe-area-inset-right,0px)) 40px max(18px,env(safe-area-inset-left,0px));flex-direction:column;align-items:stretch;gap:0;background:#0a0d18;overflow:auto;font-size:19px;z-index:70}
+  .nav.open{display:flex}
+  .nav>a,.dd>button{padding:16px 0;border-bottom:1px solid var(--line);text-align:left;width:100%}
+  .dd-menu{position:static;opacity:1;visibility:visible;transform:none;margin:0;padding:0 0 8px 12px;border:0;background:none;min-width:0}
+  .dd-menu::before{display:none}
+  .dd>button::after{display:none}
+  .nav .cta{margin-top:20px;justify-content:space-between;padding:16px 18px}
+  .hero{min-height:auto}
+  .hero-main{padding-block:26px 230px}
+  .hero.short .hero-main{padding-bottom:260px}
+  .svc-labels{grid-template-columns:1fr 1fr}
+  .cards4{grid-template-columns:1fr}
+  .card{min-height:0}
+  .probs li,.lst li{grid-template-columns:1fr;gap:6px}
+  .wgrid{grid-template-columns:1fr}
+  .wgrid .proj:nth-child(1){grid-column:span 1}
+  .proj:nth-child(1) a.vis{aspect-ratio:1.35}
+  .vals,.team,.f .row{grid-template-columns:1fr}
+  .fg{grid-template-columns:1fr 1fr}
+  .fg>div:first-child{grid-column:1/-1}
+  .hint span:last-child{display:none}
+  .lp button.nd{padding:7px 10px;font-size:12px}
+  .tbl td:first-child{white-space:normal}
+  .cs-hero{aspect-ratio:1.3}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .ln>span{transform:none}
+  .reveal{opacity:1;transform:none}
+}
+</style>
+
+<canvas id="gl" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div id="progress" aria-hidden="true"></div>
+
+<div id="loader" aria-hidden="true"><div class="ld">
+  <svg viewBox="0 0 48 48"><circle class="r1" cx="24" cy="24" r="12"/><ellipse class="r2" cx="24" cy="24" rx="22" ry="8.5" transform="rotate(-28 24 24)"/><circle class="dot" cx="42" cy="15.4" r="2.6"/></svg>
+  <div class="word">ORBIT</div><div class="bar"><i></i></div>
+</div></div>
+
+<a class="sr" href="#main" data-skip>Skip to content</a>
+<header class="top">
+  <a class="logo" href="#home" data-link="home" aria-label="Orbit home"><span id="logo-mark"></span>ORBIT<sup>®</sup></a>
+  <button class="burger" id="burger" aria-expanded="false" aria-controls="nav">MENU +</button>
+  <nav class="nav" id="nav" aria-label="Primary">
+    <a href="#work" data-link="work">Work</a>
+    <div class="dd">
+      <button type="button" data-dd aria-haspopup="true">Services</button>
+      <div class="dd-menu" id="dd-menu"></div>
+    </div>
+    <a href="#process" data-link="process">Process</a>
+    <a href="#about" data-link="about">About</a>
+    <a href="#insights" data-link="insights">Insights</a>
+    <a class="btn cta" href="#contact" data-link="contact" data-track="project_cta_click">Start a Project <span>↗</span></a>
+  </nav>
+</header>
+
+<main id="main"></main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="fg">
+      <div>
+        <a class="logo" href="#home" data-link="home" id="foot-logo" aria-label="Orbit home"></a>
+        <p class="tag2">Creative thinking. Engineered differently.</p>
+      </div>
+      <div><h4>Explore</h4><ul><li><a href="#work" data-link="work">Work</a></li><li><a href="#services" data-link="services">Services</a></li><li><a href="#process" data-link="process">Process</a></li><li><a href="#about" data-link="about">About</a></li><li><a href="#insights" data-link="insights">Insights</a></li></ul></div>
+      <div><h4>Services</h4><ul id="foot-svc"></ul></div>
+      <div><h4>Contact</h4><ul id="foot-contact"></ul></div>
+    </div>
+    <div class="fb">
+      <span>© <span id="year"></span> ORBIT. Orbit is a creative technology studio under Blakspire Pvt. Ltd.</span>
+      <span><a href="#privacy" data-link="privacy">Privacy</a> &nbsp;·&nbsp; <a href="#terms" data-link="terms">Terms</a></span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ CONFIG: edit here, nothing below invents company details ============ */
+const CONFIG={
+  email:'',            // official enquiry email, to be confirmed by Orbit
+  booking:'',          // booking link, optional
+  social:[],           // [{name:'LinkedIn',url:'https://...'}] verified profiles only
+};
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+window.__orbitEvents=[];
+function track(name,data){try{window.__orbitEvents.push({name,data,t:Date.now()})}catch(e){}}
+
+/* ============ LOGO ============ */
+function logoMark(){return `<svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><circle class="ring" cx="24" cy="24" r="12"/><ellipse class="orb" cx="24" cy="24" rx="22" ry="8.5" transform="rotate(-28 24 24)"/><circle class="node" r="2.6"><animateMotion dur="${RM?'0.001':'7'}s" repeatCount="indefinite" path="M 44 14 A 22 8.5 -28 1 1 4 34 A 22 8.5 -28 1 1 44 14"/></circle></svg>`}
+
+/* ============ DATA ============ */
+const SERVICES=[
+ {id:'films',slug:'orbit-films',name:'Orbit',em:'Films',short:'Stories that hold attention.',
+  card:'We develop video content that communicates a brand’s story, demonstrates its value and gives campaigns a clear visual identity.',
+  deliver:'Brand films, founder videos, Reels, editing, motion graphics',
+  title:'Video Production & Motion Design | Orbit Films',desc:'Brand films, founder videos, short-form content, video editing and motion design for business communication.',
+  h:'Every brand has a story. Make people feel it.',
+  d:'Orbit Films transforms ideas, products and brand messages into purposeful video content, cinematic edits and motion-led experiences designed for digital platforms and campaigns.',
+  c1:'Discuss a Film Project',c2:'View Film Work',filter:'films',
+  scope:[['Brand films','Brand story, creative concept, production planning and final film'],['Founder films','Founder interviews, business stories and leadership videos'],['Short-form content','Instagram Reels, YouTube Shorts and campaign cutdowns'],['Video editing','Story structure, pacing, transitions, colour and sound'],['Motion graphics','Animated typography, logo animation, explainers and visual effects'],['Product videos','Product showcases, feature demonstrations and launch videos'],['Campaign production','Creative concept, video assets and format adaptations']],
+  pTitle:'How a film project runs',proc:['Understand the audience and purpose.','Develop the concept, hook and visual direction.','Plan production or organise supplied footage.','Edit, animate and refine.','Deliver approved versions in agreed formats.'],
+  note:['Delivery note','Where a project needs contracted videographers, studios, voice artists or other partners, Orbit says so in the proposal. In-house production and partner work are kept separate.'],
+  close:['Have footage, an idea or a campaign in mind?','Tell us what you want people to see, understand or feel. We’ll help shape the creative direction and production scope.','Plan a Video Project']},
+ {id:'creative',slug:'orbit-creative',name:'Orbit',em:'Creative',short:'Brands people remember.',
+  card:'We shape how brands look, communicate and connect with the people they want to reach.',
+  deliver:'Brand identity, creative direction, campaign concepts, visual systems',
+  title:'Branding & Creative Direction | Orbit Creative',desc:'Brand strategy, visual identity, creative direction and campaign assets for consistent brand communication.',
+  h:'Make your brand impossible to confuse.',
+  d:'We develop creative directions, visual identities and communication systems that help businesses express their value consistently across digital and physical touchpoints.',
+  c1:'Build a Stronger Brand',c2:'View Brand Work',filter:'creative',
+  scope:[['Brand strategy','Positioning workshops, audience understanding, value proposition and messaging direction'],['Visual identity','Logo concepts, typography, colour systems, visual assets and usage guidelines'],['Creative direction','Overall look, feel, visual language and campaign execution standards'],['Campaign concepts','Creative themes, campaign messaging, key visuals and content directions'],['Social media creative','Post designs, carousels, campaign graphics and templates'],['Brand communication','Website messaging support, brand voice, campaign copy and content frameworks'],['Launch creative','Launch concepts, teaser assets, announcement visuals and coordinated creative materials']],
+  pTitle:'How a brand is developed',proc:['Brand discovery and brief.','Audience and competitor review.','Positioning and creative direction.','Design concepts and refinement.','Brand asset development.','Guidelines and handover.'],
+  note:['What you receive','Deliverables vary by scope and may include logo files, colour and typography specifications, a brand guide, social templates, campaign assets and export-ready artwork.'],
+  close:['Ready to look like what you do?','Share where the brand is today and where it needs to go. We’ll suggest a direction and a scope.','Build a Stronger Brand']},
+ {id:'digital',slug:'orbit-digital',name:'Orbit',em:'Digital',short:'Experiences built with purpose.',
+  card:'We design and build digital experiences that help businesses explain their offering, earn trust and guide users toward action.',
+  deliver:'Business websites, landing pages, UI/UX, prototypes, integrations',
+  title:'Website Design & Digital Experiences | Orbit Digital',desc:'Business websites, landing pages, UI/UX and digital experiences designed around business goals.',
+  h:'Digital experiences built for real people and real goals.',
+  d:'From business websites and campaign landing pages to digital product interfaces, Orbit combines design thinking and development to make online experiences clearer, more useful and easier to navigate.',
+  c1:'Plan Your Website',c2:'View Digital Work',filter:'digital',
+  scope:[['Business websites','Corporate, studio, service-business and startup websites'],['Landing pages','Campaign, launch and lead-generation pages'],['UI/UX design','Information architecture, user journeys, wireframes, prototypes and interface systems'],['Digital product design','Dashboards, web applications and MVP interface design'],['Frontend development','Responsive interfaces, reusable components and interaction design'],['Website integrations','Enquiry forms, analytics, CRM integrations and approved third-party services'],['Website optimisation','Performance, accessibility, content clarity and conversion-focused improvements'],['Maintenance and support','Updates, fixes and agreed ongoing technical support']],
+  pTitle:'How a website is delivered',proc:['Requirements, audience and business goals.','Sitemap and content structure.','Wireframes and visual design.','Frontend and required backend development.','Testing across supported devices and browsers.','Deployment, handover and agreed support.'],
+  note:['Technical standard','Responsive, accessible, search-engine friendly, secure and fit for the requirements. A typical stack is React or Next.js, TypeScript, Tailwind CSS and a backend or managed platform chosen for the project.'],
+  close:['Need a site that does its job?','Tell us what the website has to achieve. We’ll recommend a structure and a build approach.','Plan Your Website']},
+ {id:'intelligence',slug:'orbit-intelligence',name:'Orbit',em:'Intelligence',short:'Workflows designed to work smarter.',
+  card:'We identify practical opportunities for AI and automation to reduce repetitive work and improve operations.',
+  deliver:'Workflow automation, AI assistants, internal tools, prototypes',
+  title:'AI Integration & Workflow Automation | Orbit Intelligence',desc:'Explore practical AI integrations, workflow automation, internal tools and proofs of concept.',
+  h:'Less repetitive work. More room to think.',
+  d:'Orbit Intelligence helps businesses identify practical uses for AI, automation and connected tools. We focus on real operational problems rather than adding technology for its own sake.',
+  c1:'Explore an AI or Automation Project',c2:'View Intelligence Work',filter:'intelligence',
+  scope:[['Workflow discovery','Map repetitive tasks, handoffs, delays and bottlenecks'],['Business process automation','Automate appropriate repetitive tasks and connect supported applications'],['AI assistants','Scoped assistants for approved information retrieval, internal support and repeatable workflows'],['AI integrations','Integrate supported AI services into existing business processes'],['Internal tools','Prototypes and lightweight tools designed around specific team needs'],['Proofs of concept','Test feasibility before committing to larger development'],['Reporting workflows','Connect appropriate data sources and automate routine summaries'],['Technical discovery','Assess requirements, data access, security, integrations and feasibility']],
+  flow:['Discover','Map','Prototype','Validate','Implement','Improve'],
+  pTitle:'Delivery workflow',proc:null,
+  note:['Security','Orbit uses appropriate access controls, data-handling rules, human review where needed, error handling and clear limitations. Sensitive client data is not sent to third-party AI systems without the required permissions and safeguards.'],
+  close:['Got a process that eats time?','Describe the task and who does it today. We’ll tell you whether automation is worth it and what it would take.','Explore an AI or Automation Project']}
+];
+const FILTERS=[['all','All Work'],['films','Films & Motion'],['creative','Branding & Creative'],['digital','Websites & Digital'],['intelligence','AI & Automation'],['concept','Concept Projects']];
+const PROJECTS=[
+ {slug:'brand-in-motion',title:'Brand in Motion',status:'Concept Project',tags:['creative','films','concept'],blurb:'A visual identity that doesn’t sit still.',demo:'Visual identity, motion design and campaign video',art:'brand',
+  deliver:['Identity system','Motion principles','Campaign video','Social cutdowns'],svc:['creative','films'],
+  brief:'Explore how a brand identity can carry motion from the logo through to the campaign film.',
+  challenge:'Static identities often fall apart when they move into video and social. This concept asks what changes when motion is designed in from the start.',
+  approach:'Build the logo, type and colour system around one motion principle, then extend it into a short campaign film and vertical cutdowns.'},
+ {slug:'digital-first',title:'Digital First',status:'Concept Project',tags:['digital','concept'],blurb:'A digital home with a point of view.',demo:'Landing page, responsive website and conversion flow',art:'dig',
+  deliver:['Landing page','Responsive website','Conversion flow'],svc:['digital','creative'],
+  brief:'Design a landing page and responsive site for a fictional service business, with a clear path from first visit to enquiry.',
+  challenge:'Many business sites explain a lot and ask for very little. This concept tests a page where every section moves the visitor toward one action.',
+  approach:'Start with the enquiry flow, then write the page structure and visual system backwards from it. Prototype the layout at mobile, tablet and desktop widths.'},
+ {slug:'smarter-operations',title:'Smarter Operations',status:'Internal Experiment',tags:['intelligence'],blurb:'Less repetitive work. More room to think.',demo:'AI workflow concept and automation demonstration',art:'ops',
+  deliver:['Workflow map','Prototype','Automation demo'],svc:['intelligence','digital'],
+  brief:'Map a repetitive internal workflow and test how an AI step could handle the routine part, with a person reviewing the result.',
+  challenge:'Repetitive handoffs take time away from work that needs judgement. Automating them without limits creates risk of its own.',
+  approach:'Document the workflow, pick one step suited to automation, prototype it with test data only, keep a human approval step and write down the limits.'},
+ {slug:'founder-story',title:'The Founder Story',status:'Concept Project',tags:['films','concept'],blurb:'One interview, many short stories.',demo:'Interview-led video, editing and social cutdowns',art:'fnd',
+  deliver:['Interview-led video','Main edit','Social cutdowns'],svc:['films','creative'],
+  brief:'Plan a founder story film and the short cutdowns that follow it.',
+  challenge:'A long interview rarely works on social media by itself. Each platform needs its own shape.',
+  approach:'Structure the interview around three questions, edit one main film, then cut vertical clips that each carry a single idea. It would become a Client Project only with permission and a factual basis.'},
+ {slug:'reimagined-identity',title:'Reimagined Identity',status:'Concept Project',tags:['creative','concept'],blurb:'A fresh look for a fictional business.',demo:'Logo direction, typography, colours and brand applications',art:'id',
+  deliver:['Logo direction','Typography','Colour system','Brand applications'],svc:['creative'],
+  brief:'Reimagine the identity of a fictional business, from logo direction to everyday applications.',
+  challenge:'A new logo is the easy part. The harder question is whether type, colour and layout still feel like one brand on a receipt, a post and a shopfront.',
+  approach:'Define the idea in one sentence, test it across three applications, then refine type and colour until the system holds up in all of them.'}
+];
+const INSIGHTS=[
+ ['Why posting more doesn’t always mean better marketing','Creative Thinking','Business owners'],['What makes a brand look premium?','Branding & Communication','Startups and growing brands'],
+ ['How to plan a month of useful business content','Creative Thinking','Marketing teams'],['What makes a short-form video hold attention?','Video & Motion','Brands and creators'],
+ ['What should a business website actually accomplish?','Websites & Digital Experiences','B2B companies'],['Landing page versus full website: how to choose','Websites & Digital Experiences','Founders'],
+ ['Seven website mistakes that create unnecessary friction','Websites & Digital Experiences','Small businesses'],['Where AI automation makes sense for a small business','AI & Automation','Operations teams'],
+ ['How to identify repetitive workflows worth automating','AI & Automation','Business owners'],['What to prepare before hiring a creative studio','Creative Thinking','Prospective clients'],
+ ['How brand identity and motion design work together','Branding & Communication','Marketing teams'],['Building Orbit: lessons from developing a studio','Building Orbit','Creative community']
+];
+const INS_CATS=['All','Creative Thinking','Video & Motion','Branding & Communication','Websites & Digital Experiences','AI & Automation','Building Orbit'];
+const LOOP=[['Observe','Understand business, audience, existing assets, challenges and goals.','Discovery notes and initial brief'],['Reframe','Identify the real problem, sharpen the brief and establish direction.','Direction and agreed scope'],['Build','Develop creative work, digital experience or technical solution.','Drafts, prototypes or milestones'],['Introduce','Prepare deliverables, launch or handover.','Approved assets, deployment or handover'],['Tune','Review feedback and available performance data; make agreed improvements.','Agreed revisions, support or next steps']];
+const FAQ=[['What does Orbit do?','Orbit offers video and motion production, creative direction and branding, website and digital experience development, and practical AI and automation solutions.'],['Can I hire Orbit for one service?','Yes. Clients can engage Orbit for an individual project or combine services supporting the same objective.'],['Does Orbit work with startups and small businesses?','Yes. Scope and deliverables can be tailored to requirements and budget.'],['Can Orbit manage ongoing content?','Arrangements may include agreed content planning, production, editing and delivery. Posting, community management, paid advertising and reporting must be explicitly included if offered.'],['Does Orbit develop AI products?','Orbit can explore AI integrations, automation, internal tools and prototypes. Larger products require technical discovery, feasibility assessment and an agreed scope.'],['How does pricing work?','Pricing depends on deliverables, complexity, timeline, usage rights and ongoing support. Orbit provides a written proposal after understanding the brief.'],['How do I get started?','Submit the project enquiry form with business details, goals and requirements. Orbit will review and respond with the appropriate next step.']];
+const svcById=id=>SERVICES.find(s=>s.id===id);
+
+/* ============ ICONS & ART ============ */
+const ICON={
+ films:`<svg class="ico" viewBox="0 0 64 64"><circle class="v sp" cx="32" cy="32" r="26"/><circle class="c sp2" cx="32" cy="32" r="8"/><g class="w sp"><circle cx="32" cy="14" r="4"/><circle cx="32" cy="50" r="4"/><circle cx="14" cy="32" r="4"/><circle cx="50" cy="32" r="4"/></g></svg>`,
+ creative:`<svg class="ico" viewBox="0 0 64 64"><circle class="w" cx="32" cy="32" r="17"/><ellipse class="v sp" cx="32" cy="32" rx="28" ry="10" transform="rotate(-30 32 32)"/><circle cx="32" cy="32" r="3" style="fill:#00d9ff;stroke:none"/></svg>`,
+ digital:`<svg class="ico" viewBox="0 0 64 64"><rect class="v sp" x="14" y="14" width="36" height="36"/><rect class="c sp2" x="21" y="21" width="22" height="22"/><rect class="w" x="27" y="27" width="10" height="10"/></svg>`,
+ intelligence:`<svg class="ico" viewBox="0 0 64 64"><g class="c sp"><path d="M32 6v52M9.5 19l45 26M9.5 45l45-26"/></g><circle class="v" cx="32" cy="32" r="9"/></svg>`
+};
+function art(k){
+ if(k==='brand')return `<div class="art a-brand"><div class="o">O</div></div>`;
+ if(k==='dig')return `<div class="art a-dig"><div class="bf"><div class="bar"><i></i><i></i><i></i></div><div class="bd"><small>MAKE ROOM FOR BETTER.</small><strong>Less noise.<br><em>More signal.</em></strong></div><div class="bt">DISCOVER ↗</div><div class="sh"></div></div></div>`;
+ if(k==='ops')return `<div class="art a-ops"><div class="flow"><div class="bx">INPUT</div><span class="ar">→</span><div class="bx ai">ORBIT<br>INTELLIGENCE</div><span class="ar">→</span><div class="bx">OUTPUT</div></div></div>`;
+ if(k==='fnd'){let w='';for(let i=0;i<34;i++)w+=`<i style="--k:${i}"></i>`;return `<div class="art a-fnd"><div class="fnd"><div class="main"></div><div class="v"></div><div class="v"></div></div><div class="wv">${w}</div></div>`}
+ return `<div class="art a-id"><div class="idg"><div class="s1">Aa</div><div class="s2">O</div><div class="s3">Aa</div><div class="s4">®</div><div class="s5 s1"></div><div class="s6"></div></div></div>`;
+}
+const statusLabel=p=>p.status;
+
+/* ============ PAGE BUILDERS ============ */
+const arrowBtn=(t,go,cls='',trk='project_cta_click')=>`<a class="btn ${cls}" href="#${go}" data-link="${go}" data-track="${trk}">${t} <span>↗</span></a>`;
+
+function projCard(p){return `<article class="proj reveal"><a class="vis tilt" href="#case-${p.slug}" data-link="case-${p.slug}" data-track="portfolio_project_open" aria-label="Open ${esc(p.title)} case study">${art(p.art)}<div class="vtl"><span>${esc(p.status)}</span><span>${p.deliver[0]}</span></div></a><div class="cap"><div><span class="tag">${esc(p.status)}</span><h3>${esc(p.title)}</h3></div><p>${esc(p.blurb)}</p></div></article>`}
+
+function pHome(){
+ return `
+ <section class="hero wrap">
+  <div class="hero-main"><div>
+   <p class="eyebrow">Creativity × Design × Technology</p>
+   <h1><span class="ln" style="--i:0"><span>Ideas deserve</span></span><span class="ln" style="--i:1"><span>more than</span></span><span class="ln" style="--i:2"><span class="out">execution.</span></span></h1>
+   <p class="lead">We help ambitious businesses turn ideas into compelling content, distinctive brands, high-performing digital experiences and smarter workflows.</p>
+   <div class="acts">${arrowBtn('Start a Project','contact')}<a class="link" href="#work" data-link="work">Explore Our Work <span>↓</span></a></div>
+  </div><div aria-hidden="true"></div></div>
+  <div><div class="svc-labels">${SERVICES.map(s=>`<a href="#${s.id}" data-link="${s.id}" data-hover><b>${s.em}</b><small>${s.short}</small></a>`).join('')}</div>
+  <div class="hint mono"><span><i></i>Scroll</span><span>Creative thinking. Engineered differently.</span></div></div>
+ </section>
+
+ <section class="band wrap" id="sec-pos"><div class="kick reveal"><span class="mono">The point of view</span><i></i></div>
+  <div class="split"><div class="reveal"><h2 class="big">Your business doesn’t need disconnected execution. It needs <span class="grad">connected thinking.</span></h2>
+   <ul class="probs"><li><b>Disconnected brand experiences</b><span>The message changes across platforms.</span></li><li><b>Digital presence without direction</b><span>The website and content do not communicate value clearly.</span></li><li><b>Manual work that slows you down</b><span>Repetitive processes consume time that could be spent growing the business.</span></li></ul></div>
+   <div class="reveal"><p class="lead">Businesses often manage content, branding, websites and technology separately. The result can be an inconsistent brand, disconnected customer experiences and workflows that take more effort than they should.</p><p class="lead" style="margin-top:18px">Orbit brings these disciplines together under one creative direction, so every element has a purpose and contributes to a bigger picture.</p><p style="margin-top:28px"><a class="link" href="#loop" data-scroll="sec-loop">Explore How Orbit Works <span>↓</span></a></p></div></div>
+  <div class="eq reveal"><span>Strategy</span><b>＋</b><span>Story</span><b>＋</b><span>Design</span><b>＋</b><span>Technology</span><b>＝</b><span class="res">One clear direction</span></div>
+ </section>
+
+ <section class="band alt wrap" id="sec-svc"><div class="kick reveal"><span class="mono">What we do</span><i></i></div>
+  <div class="reveal"><h2 class="big">Four capabilities.<br>One connected studio.</h2><p class="lead" style="margin-top:22px">Choose the service you need today, or combine capabilities around a larger business goal.</p></div>
+  <div class="cards4">${SERVICES.map(s=>`<a class="card tilt reveal" href="#${s.id}" data-link="${s.id}" data-hover>${ICON[s.id]}<h3>${s.name} <em>${s.em}</em></h3><p>${s.card}</p><div class="del">${s.deliver}</div><div class="go"><span>Explore ${s.em}</span><span>↗</span></div></a>`).join('')}</div>
+ </section>
+
+ <section class="band wrap" id="sec-work"><div class="kick reveal"><span class="mono">Selected work</span><i></i></div>
+  <div class="reveal" style="display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;align-items:end"><h2 class="big">Ideas in progress.<br>Experiences taking shape.</h2><p class="lead" style="max-width:34ch">Sample project concepts. They are labelled as concepts or experiments, not completed client work.</p></div>
+  <div class="wgrid" style="margin-top:50px">${PROJECTS.map(projCard).join('')}</div>
+  <p style="margin-top:50px" class="reveal">${arrowBtn('See all work','work','ghost')}</p>
+ </section>
+
+ <section class="band alt wrap" id="sec-loop"><div class="kick reveal"><span class="mono">The ORBIT Loop</span><i></i></div>
+  <div class="reveal"><h2 class="big">Make it clear.<br>Make it real.</h2><p class="lead" style="margin-top:22px">A flexible process with enough structure to keep things moving, and enough curiosity to find a better answer.</p></div>
+  <div class="loop reveal"><div class="lp" id="lp"><div class="rg r1"></div><div class="rg r2"></div><div class="sat"></div><div class="core">${logoMark()}</div>${LOOP.map((l,i)=>{const a=(-90+i*72)*Math.PI/180;return `<button class="nd" role="tab" aria-selected="${i===0}" data-i="${i}" style="left:${50+41*Math.cos(a)}%;top:${50+41*Math.sin(a)}%"><i>${i+1}</i>${l[0]}</button>`}).join('')}</div>
+   <div class="ld-card" id="lcard" aria-live="polite"></div></div>
+ </section>
+
+ <section class="band wrap" id="sec-aud"><div class="kick reveal"><span class="mono">Audience</span><i></i></div>
+  <div class="two"><div class="reveal"><h2 class="mid">Built for businesses ready to move forward.</h2></div>
+  <ul class="lst reveal"><li><b>Startups and founders</b><span>Launch assets, digital presence, brand identity and founder content.</span></li><li><b>Growing businesses</b><span>Consistent creative output, website improvements and content systems.</span></li><li><b>B2B and professional services</b><span>Clear positioning, credible digital presence and educational content.</span></li><li><b>Established brands</b><span>Campaigns, production, digital initiatives and selected workflow improvements.</span></li><li><b>Agencies and collaborators</b><span>Production support, creative execution, website projects and agreed white-label partnerships.</span></li></ul></div>
+ </section>
+
+ <section class="band alt wrap"><div class="kick reveal"><span class="mono">Why Orbit</span><i></i></div>
+  <div class="two"><div class="reveal"><h2 class="mid">Connected disciplines. Clear intent. Thoughtful execution.</h2></div>
+  <ul class="lst reveal"><li><b>One direction</b><span>Content, design and digital work share the same business objective.</span></li><li><b>Purpose before production</b><span>Start with the problem, not a tool or trend.</span></li><li><b>Built around the brief</b><span>Choose the team, deliverables and process based on project needs.</span></li><li><b>Creative and technical thinking</b><span>Consider how an experience looks, communicates and functions.</span></li><li><b>A practical relationship</b><span>Clear scope, agreed timelines, revision rounds and transparent communication.</span></li></ul></div>
+ </section>
+
+ <section class="band wrap"><div class="kick reveal"><span class="mono">Questions</span><i></i></div>
+  <div class="two"><div class="reveal"><h2 class="mid">Before you reach out.</h2></div><div class="faqs reveal" style="margin-top:0">${FAQ.map(f=>`<details class="faq"><summary>${f[0]}</summary><p>${f[1]}</p></details>`).join('')}</div></div>
+ </section>
+
+ ${finalCta()}`;
+}
+function finalCta(){return `<section class="band alt wrap final"><p class="eyebrow reveal">Your next idea starts here</p><h2 class="reveal">Let’s build something that moves your business forward.</h2><p class="lead reveal">Tell us what you’re trying to create, improve or solve. We’ll explore the brief and identify a practical way to move forward.</p><div class="reveal">${arrowBtn('Start a Project','contact')}</div><p class="muted note reveal">No generic packages. A conversation about your actual requirements.</p></section>`}
+
+function pServices(){
+ return `<section class="hero short wrap"><div class="hero-main"><div><p class="eyebrow">Capabilities</p><h1><span class="ln" style="--i:0"><span>Different tools.</span></span><span class="ln" style="--i:1"><span class="out">Shared intent.</span></span></h1><p class="lead">Bring us one challenge or connect the disciplines around a bigger ambition. Four service lines, one creative direction.</p></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap">${SERVICES.map((s,i)=>`<a class="srow reveal" href="#${s.id}" data-link="${s.id}" data-hover><span class="mono">0${i+1}</span><div><h3>${s.name} <em>${s.em}</em></h3><p class="muted" style="margin-top:8px">${s.short}</p></div><div class="dt muted" style="font-size:14px">${s.deliver}</div><span class="ar">↗</span></a>`).join('')}
+ <div style="margin-top:60px" class="reveal">${arrowBtn('Start a Project','contact')}</div></section>`;
+}
+
+function pService(s){
+ const rel=PROJECTS.filter(p=>p.svc.includes(s.id)).slice(0,3);
+ const proc=s.proc?`<div class="steps">${s.proc.map((t,i)=>`<div class="reveal"><b>Step ${i+1}</b><p>${t}</p></div>`).join('')}</div>`:`<div class="flowline reveal">${s.flow.map((f,i)=>(i?'<i>→</i>':'')+`<span>${f}</span>`).join('')}</div>`;
+ return `<div class="wrap"><div class="crumb"><a href="#home" data-link="home">Home</a><span>/</span><a href="#services" data-link="services">Services</a><span>/</span><span>${s.name} ${s.em}</span></div></div>
+ <section class="hero short wrap"><div class="hero-main"><div>
+  <p class="eyebrow">${s.name} ${s.em}</p><h1><span class="ln" style="--i:0"><span>${s.h}</span></span></h1>
+  <p class="lead">${s.d}</p><div class="acts">${arrowBtn(s.c1,'contact')}<a class="link" href="#work" data-link="work" data-filter="${s.filter}">${s.c2} <span>→</span></a></div></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap"><div class="kick reveal"><span class="mono">Scope</span><i></i></div><h2 class="mid reveal">What ${s.name} ${s.em} covers.</h2>
+  <div class="tblwrap reveal"><table class="tbl"><thead><tr><th>Service</th><th>Scope</th></tr></thead><tbody>${s.scope.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table></div></section>
+ <section class="band alt wrap"><div class="kick reveal"><span class="mono">Process</span><i></i></div><h2 class="mid reveal">${s.pTitle}.</h2>${proc}
+  <div class="note-box reveal"><b>${s.note[0]}.</b> ${s.note[1]}</div></section>
+ <section class="band wrap"><div class="kick reveal"><span class="mono">Related work</span><i></i></div><div class="wgrid few" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${rel.map(p=>projCard(p).replace('proj reveal','proj reveal')).join('')}</div>
+  <div class="cta-band reveal" style="margin-top:70px"><div><h3>${s.close[0]}</h3><p>${s.close[1]}</p></div><div>${arrowBtn(s.close[2],'contact')}</div></div></section>`;
+}
+
+function pWork(){
+ return `<section class="hero short wrap"><div class="hero-main"><div><p class="eyebrow">Selected work</p><h1><span class="ln" style="--i:0"><span>Ideas, made</span></span><span class="ln" style="--i:1"><span class="out">visible.</span></span></h1><p class="lead">A look at the kind of worlds we build. Every project here is a concept or an internal experiment, and is labelled that way.</p></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap"><div class="chips" role="group" aria-label="Filter projects">${FILTERS.map((f,i)=>`<button class="chip" data-f="${f[0]}" aria-pressed="${i===0}">${f[1]}</button>`).join('')}</div>
+  <div class="wgrid" id="wgrid"></div><p class="muted" id="wempty" hidden>No projects in this category yet.</p>
+  <div class="note-box">These are sample project concepts, not claims that completed client work exists. Client projects will be added only with permission and a factual basis.</div></section>`;
+}
+
+function pCase(p){
+ const rel=PROJECTS.filter(x=>x!==p).slice(0,2);
+ return `<div class="wrap"><div class="crumb"><a href="#home" data-link="home">Home</a><span>/</span><a href="#work" data-link="work">Work</a><span>/</span><span>${esc(p.title)}</span></div></div>
+ <section class="wrap" style="padding-top:34px"><span class="tag">${esc(p.status)}</span><h1 style="font-size:clamp(44px,7vw,108px);letter-spacing:-.06em;line-height:.95;margin-top:14px"><span class="ln" style="--i:0"><span>${esc(p.title)}</span></span></h1>
+  <p class="lead" style="margin-top:20px">${esc(p.demo)}.</p><div class="cs-hero tilt">${art(p.art)}</div></section>
+ <section class="band wrap" style="margin-top:50px"><div class="cs-grid"><aside class="cs-side reveal"><div><h4>Status</h4><ul><li>${esc(p.status)}</li></ul></div><div><h4>Deliverables</h4><ul>${p.deliver.map(d=>`<li>${d}</li>`).join('')}</ul></div><div><h4>Related services</h4><ul>${p.svc.map(id=>`<li><a class="link" href="#${id}" data-link="${id}">${svcById(id).name} ${svcById(id).em} <span>→</span></a></li>`).join('')}</ul></div></aside>
+  <div class="cs-body reveal"><section><h3>Brief</h3><p>${p.brief}</p></section><section><h3>Challenge</h3><p>${p.challenge}</p></section><section><h3>Approach</h3><p>${p.approach}</p></section><section><h3>Outcome</h3><p>No measured results. This is a ${p.status==='Internal Experiment'?'prototype built with sample data':'concept exploration'}, so it shows direction and craft rather than performance. Verified outcomes will appear here only for real, permitted client work.</p></section></div></div></section>
+ <section class="band alt wrap"><div class="kick reveal"><span class="mono">More work</span><i></i></div><div class="wgrid few" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${rel.map(projCard).join('')}</div>
+ <div class="cta-band reveal" style="margin-top:70px"><div><h3>Have something like this in mind?</h3><p>Tell us the goal and we’ll suggest how to approach it.</p></div><div>${arrowBtn('Start a Project','contact')}</div></div></section>`;
+}
+
+function pProcess(){
+ const rows=[['1. Discovery','Discuss business, audience, challenge, deliverables, budget range and timeline.','Initial brief and next-step recommendation'],['2. Scope and direction','Agree objectives, deliverables, responsibilities, timeline, budget and acceptance criteria.','Written proposal and project scope'],['3. Creation','Develop concepts, designs, content or technical implementation.','Drafts, prototypes or production milestones'],['4. Review and refinement','Client provides consolidated feedback within agreed revision rounds.','Refined deliverables and approved versions'],['5. Delivery','Deliver files, publish approved work or hand over solution.','Final assets, documentation and access handover'],['6. Ongoing improvement','If included, review feedback and performance data for next steps.','Agreed maintenance, iteration or follow-on work']];
+ return `<section class="hero short wrap"><div class="hero-main"><div><p class="eyebrow">Our process</p><h1><span class="ln" style="--i:0"><span>A clear process.</span></span><span class="ln" style="--i:1"><span class="out">Room for better ideas.</span></span></h1><p class="lead">Every project follows the same six stages, so you always know what happens next and what you will receive.</p></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap"><div class="kick reveal"><span class="mono">From first call to handover</span><i></i></div>
+  <div class="tblwrap reveal"><table class="tbl"><thead><tr><th>Step</th><th>Client experience</th><th>Output</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}</tbody></table></div></section>
+ <section class="band alt wrap"><div class="two"><div class="reveal"><h2 class="mid">Project governance.</h2><p class="lead" style="margin-top:18px">Each project starts with these points agreed in writing.</p></div>
+  <ul class="lst reveal" style="margin-top:0">${[['Owner and channel','A named project owner and communication channel.'],['Scope','Scope, exclusions and assumptions.'],['Timeline','Timeline, milestones and client dependencies.'],['Fees','Fees, applicable taxes and payment schedule.'],['Revisions','Revision rounds and change-request process.'],['Approval','Approval and acceptance process.'],['Rights','Intellectual property and usage rights.'],['Care','Confidentiality, data handling, cancellation and support terms.']].map(r=>`<li><b>${r[0]}</b><span>${r[1]}</span></li>`).join('')}</ul></div></section>
+ ${finalCta()}`;
+}
+
+function pAbout(){
+ return `<section class="hero short wrap"><div class="hero-main"><div><p class="eyebrow">The studio</p><h1><span class="ln" style="--i:0"><span>Creativity and technology,</span></span><span class="ln" style="--i:1"><span class="out">one system.</span></span></h1><p class="lead">We see creativity and technology as parts of the same system.</p></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap"><div class="two"><div class="reveal"><h2 class="mid">Good work starts with understanding the problem.</h2></div><div class="reveal"><p class="lead">Orbit is a creative technology studio built around one idea: good work starts with understanding the problem, finding a thoughtful direction and bringing that direction to life. We work across films, creative direction, digital experiences and intelligent solutions. Each discipline has its own craft, but the greatest opportunity often lies in how they work together.</p><p class="lead" style="margin-top:18px">Our approach combines creative exploration with practical execution. We want every project to have a clear reason for existing, a considered design direction and a useful outcome for the people it serves.</p><p class="note-box">Orbit is a creative technology studio under <b>Blakspire Pvt. Ltd.</b></p></div></div></section>
+ <section class="band alt wrap"><div class="kick reveal"><span class="mono">Values</span><i></i></div><h2 class="mid reveal">How we work.</h2>
+  <div class="vals reveal">${[['Curiosity','Explore different approaches.'],['Intentionality','Give each design, edit and feature a clear purpose.'],['Craft','Pay attention to details that shape the experience.'],['Clarity','Communicate scope, decisions, limitations and expectations.'],['Experimentation','Test ideas, learn from feedback and improve.'],['Responsibility','Treat client information, creative assets and technical systems with care.']].map(v=>`<div><b>${v[0]}</b><span>${v[1]}</span></div>`).join('')}</div></section>
+ <section class="band wrap"><div class="kick reveal"><span class="mono">Team</span><i></i></div><h2 class="mid reveal">Roles, not résumés.</h2><p class="lead reveal" style="margin-top:16px">Names, portraits and biographies are published only with permission. Specialist partners are brought in as needed and are not presented as full-time staff.</p>
+  <div class="team reveal"><div><span class="mono">Role</span><b>Founder / Studio Lead</b><p>Business strategy, client relationships, creative direction and project oversight.</p></div><div><span class="mono">Role</span><b>Creative Producer / Content Lead</b><p>On-camera content, production, editing and social storytelling, where the role is formally agreed.</p></div><div><span class="mono">Partners</span><b>Development and Specialist Partners</b><p>Website development, motion production or technical expertise brought in as needed.</p></div></div></section>
+ ${finalCta()}`;
+}
+
+function pInsights(){
+ return `<section class="hero short wrap"><div class="hero-main"><div><p class="eyebrow">Insights</p><h1><span class="ln" style="--i:0"><span>Notes on making</span></span><span class="ln" style="--i:1"><span class="out">work that works.</span></span></h1><p class="lead">Practical writing on creative thinking, video, brand, websites and automation. Articles are in development; below is the planned editorial list.</p></div><div aria-hidden="true"></div></div></section>
+ <section class="band wrap"><div class="chips" role="group" aria-label="Filter by category">${INS_CATS.map((c,i)=>`<button class="chip" data-ic="${c}" aria-pressed="${i===0}">${c}</button>`).join('')}</div>
+  <ul class="lst" id="ilist" style="margin-top:0"></ul></section>`;
+}
+
+function contactLine(){
+ const e=CONFIG.email;
+ let h=`<div><span class="mono">Email</span>${e?`<span id="mail">${esc(e)}</span><button class="copy" type="button" data-copy="${esc(e)}" data-track="email_contact_click">Copy</button>`:`<span class="muted">Official enquiry email to be confirmed</span>`}</div>`;
+ if(CONFIG.booking)h+=`<div><span class="mono">Call</span><a class="link" href="${esc(CONFIG.booking)}" target="_blank" rel="noopener" data-track="meeting_booking_click">Book a meeting <span>↗</span></a></div>`;
+ CONFIG.social.forEach(s=>{h+=`<div><span class="mono">${esc(s.name)}</span><a class="link" href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)} <span>↗</span></a></div>`});
+ return h;
+}
+function pContact(){
+ return `<section class="band wrap" style="padding-top:clamp(40px,6vw,90px)"><div class="cgrid"><div><p class="eyebrow">Contact</p><h1 style="font-size:clamp(44px,6.4vw,100px);letter-spacing:-.06em;line-height:.95;margin:22px 0 26px"><span class="ln" style="--i:0"><span>Tell us what</span></span><span class="ln" style="--i:1"><span class="out">you’re building.</span></span></h1><p class="lead">Share your business, goals and requirements. Orbit will review the brief and respond with the appropriate next step.</p><div class="contactline" id="cline">${contactLine()}</div></div>
+ <div><form class="f" id="cf" novalidate><div class="row"><label class="fld" id="f-name"><span>Full name</span><input id="name" name="name" autocomplete="name" required aria-describedby="e-name"><i class="er" id="e-name">Enter your name.</i></label>
+ <label class="fld" id="f-email"><span>Work email</span><input id="email" name="email" type="email" autocomplete="email" required aria-describedby="e-email"><i class="er" id="e-email">Enter a valid email, like name@company.com.</i></label></div>
+ <label class="fld"><span>Company or brand (optional)</span><input id="company" name="company" autocomplete="organization"></label>
+ <label class="fld" id="f-service"><span>Service interest</span><select id="service" name="service" required aria-describedby="e-service"><option value="" selected disabled>Choose a starting point</option><option>Films</option><option>Creative</option><option>Digital</option><option>Intelligence</option><option>Multiple Services</option><option>Not Sure</option></select><i class="er" id="e-service">Choose the service closest to what you need.</i></label>
+ <div class="row"><label class="fld"><span>Indicative budget (optional)</span><select id="budget" name="budget"><option value="">Not selected</option><option>Under ₹10k</option><option>₹10k–₹25k</option><option>₹25k–₹50k</option><option>₹50k+</option><option>Not Sure</option></select></label>
+ <label class="fld"><span>Timeline (optional)</span><select id="timeline" name="timeline"><option value="">Not selected</option><option>ASAP</option><option>Within a month</option><option>1–3 months</option><option>Exploring</option></select></label></div>
+ <label class="fld"><span>Project brief (recommended)</span><textarea id="brief" name="brief" rows="4" placeholder="The goal, the problem and the outcome you want."></textarea></label>
+ <label class="chk" id="f-priv"><input type="checkbox" id="priv" required aria-describedby="e-priv"><span>I have read the <a href="#privacy" data-link="privacy">privacy notice</a> and agree to Orbit using these details to respond to my enquiry.<i class="er" id="e-priv" style="display:none;color:#ff8da1;font-style:normal;margin-top:4px">Please confirm to continue.</i></span></label>
+ <button class="btn" type="submit" style="width:100%;justify-content:space-between">Send project brief <span>↗</span></button>
+ <p class="muted" style="font-size:13px;margin-top:14px">Preview form: validation runs in your browser and nothing is sent or stored. A secure backend, storage and email notification are set up before launch.</p></form>
+ <div class="ok" id="cok" role="status"><h3>Brief captured in this preview.</h3><p class="lead">Nothing was sent, because this version has no backend connected yet. When it is live, enquiries will reach Orbit and you will see a confirmation here.</p></div></div></div></section>`;
+}
+
+function pLegal(kind){
+ if(kind==='privacy')return `<section class="band wrap"><div class="legal"><p class="eyebrow">Privacy</p><h1 style="font-size:clamp(40px,5vw,72px);letter-spacing:-.05em;margin:18px 0 20px">Privacy notice</h1><p class="note-box"><b>Draft.</b> This notice describes what the enquiry form collects. It must be reviewed and completed by Orbit’s legal adviser, and aligned with the final data practices, before launch.</p>
+ <h2>What we collect</h2><p>When you submit the enquiry form: your name, work email, company or brand, service interest, optional budget and timeline, and the project brief you write.</p>
+ <h2>Why we collect it</h2><p>To read your enquiry, reply to you and prepare a proposal. Marketing messages are sent only with separate, optional consent.</p>
+ <h2>Who is responsible</h2><p>Orbit, a creative technology studio under Blakspire Pvt. Ltd. Legal entity details and the privacy contact are to be confirmed.</p>
+ <h2>Storage, retention and your rights</h2><p>Storage location, retention period and how to request access, correction or deletion are to be confirmed before launch.</p>
+ <h2>Analytics and cookies</h2><p>Non-essential analytics are used only where consent is required and obtained. Details are to be confirmed once the analytics tools are chosen.</p></div></section>`;
+ return `<section class="band wrap"><div class="legal"><p class="eyebrow">Terms</p><h1 style="font-size:clamp(40px,5vw,72px);letter-spacing:-.05em;margin:18px 0 20px">Terms of use</h1><p class="note-box"><b>Draft.</b> These terms are a placeholder and must be reviewed by Orbit’s legal adviser before launch.</p>
+ <h2>Using this website</h2><p>The content on this site describes Orbit’s services and sample concepts. Nothing here is an offer or a guarantee of results.</p>
+ <h2>Sample projects</h2><p>Projects shown are concepts or internal experiments unless labelled as client work. They do not imply completed commissions.</p>
+ <h2>Project terms</h2><p>Each engagement is governed by a written proposal covering scope, fees, revisions, intellectual property, confidentiality and support.</p>
+ <h2>Contracting entity</h2><p>Contracting entity details are to be confirmed by Orbit.</p></div></section>`;
+}
+
+/* ============ ROUTER ============ */
+const META={home:['Orbit | Creative Technology Studio','Orbit connects video production, creative direction, website development and practical AI solutions for ambitious businesses.'],
+ services:['Services | Orbit','Four capabilities, one connected studio: films, creative, digital and intelligence.'],
+ work:['Work | Orbit','Concept projects and experiments from Orbit across film, brand, digital and automation.'],
+ process:['Process | Orbit','A clear six-step process from discovery to delivery.'],about:['About | Orbit','Orbit is a creative technology studio under Blakspire Pvt. Ltd.'],
+ insights:['Insights | Orbit','Practical writing on creative thinking, video, branding, websites and automation.'],contact:['Start a Project | Orbit','Share your business, goals and requirements. Orbit will respond with the appropriate next step.'],
+ privacy:['Privacy | Orbit','Draft privacy notice.'],terms:['Terms | Orbit','Draft terms of use.']};
+SERVICES.forEach(s=>META[s.id]=[s.title,s.desc]);
+PROJECTS.forEach(p=>META['case-'+p.slug]=[p.title+' | Orbit',p.brief]);
+const BUILD={home:pHome,services:pServices,work:pWork,process:pProcess,about:pAbout,insights:pInsights,contact:pContact,privacy:()=>pLegal('privacy'),terms:()=>pLegal('terms')};
+SERVICES.forEach(s=>BUILD[s.id]=()=>pService(s));
+PROJECTS.forEach(p=>BUILD['case-'+p.slug]=()=>pCase(p));
+const FEATURE={films:'films',creative:'creative',digital:'digital',intelligence:'intel',about:'logo'};
+let current=null,io=null,loopTimer=null;
+
+function mountPages(){
+ const app=$('#main');
+ Object.keys(BUILD).forEach(k=>{const s=document.createElement('div');s.className='page';s.id='pg-'+k;s.hidden=true;s.innerHTML=BUILD[k]();app.appendChild(s)});
+}
+function observe(root){
+ $$('.reveal:not(.in)',root).forEach(el=>{ if(io)io.observe(el); else el.classList.add('in') });
+}
+function navigate(tok,opts={}){
+ if(!BUILD[tok])tok='home';
+ const next=$('#pg-'+tok); if(!next)return;
+ if(current===tok&&!opts.force)return;
+ const prev=current?$('#pg-'+current):null; current=tok;
+ if(prev){prev.hidden=true;prev.classList.remove('enter')}
+ next.hidden=false; next.classList.remove('enter'); void next.offsetWidth; next.classList.add('enter');
+ window.scrollTo({top:0,behavior:'instant'});
+ const m=META[tok]||META.home; document.title=m[0]; const md=$('meta[name=description]'); if(md)md.setAttribute('content',m[1]);
+ $$('.nav a[data-link]').forEach(a=>a.classList.toggle('on',a.dataset.link===tok));
+ const svcOn=!!svcById(tok)||tok==='services'; const dd=$('.dd>button'); if(dd)dd.classList.toggle('on',svcOn);
+ if(!opts.silent){try{if(location.hash.slice(1)!==tok)history.replaceState(null,'','#'+tok)}catch(e){}}
+ closeMenu(); observe(next);
+ if(svcById(tok))track('service_page_view',{service:tok});
+ try{GL&&GL.route(tok,FEATURE[tok]||null)}catch(e){}
+ if(tok==='home')startLoop(); else stopLoop();
+ if(tok==='work')applyFilter(window.__wf||'all');
+ if(tok==='insights')renderInsights('All');
+ onScroll();
+}
+function closeMenu(){const n=$('#nav');if(n){n.classList.remove('open');$('#burger').setAttribute('aria-expanded','false');$('#burger').textContent='MENU +'}}
+
+/* ============ INTERACTIONS ============ */
+function applyFilter(f){
+ window.__wf=f;
+ $$('#pg-work .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.f===f)));
+ const list=f==='all'?PROJECTS:PROJECTS.filter(p=>p.tags.includes(f));
+ const g=$('#wgrid'); g.innerHTML=list.map(projCard).join(''); g.classList.toggle('few',list.length<3);
+ $('#wempty').hidden=list.length>0; observe(g); bindTilt(g);
+}
+function renderInsights(cat){
+ $$('#pg-insights .chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.ic===cat)));
+ const l=INSIGHTS.filter(i=>cat==='All'||i[1]===cat);
+ $('#ilist').innerHTML=l.map(i=>`<li><b>${i[0]}</b><span><span class="tag">${i[1]}</span><br>For ${i[2].toLowerCase()}. <span class="muted">Planned article.</span></span></li>`).join('');
+}
+let loopI=0;
+function showLoop(i){
+ loopI=i; const l=LOOP[i]; const c=$('#lcard'); if(!c)return;
+ c.innerHTML=`<span class="mono">Stage ${i+1} of 5</span><h3>${l[0]}</h3><p class="lead">${l[1]}</p><div class="out2"><b>Typical output</b><span>${l[2]}</span></div>`;
+ $$('#lp .nd').forEach((b,k)=>b.setAttribute('aria-selected',String(k===i)));
+}
+function startLoop(){stopLoop();showLoop(loopI);if(RM)return;loopTimer=setInterval(()=>{ if(!document.hidden&&!$('#lp:hover'))showLoop((loopI+1)%LOOP.length)},4200)}
+function stopLoop(){clearInterval(loopTimer)}
+
+function bindTilt(root=document){
+ if(!matchMedia('(pointer:fine)').matches||RM)return;
+ $$('.tilt',root).forEach(el=>{
+  if(el.__t)return; el.__t=1;
+  el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();const x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;
+   el.style.transform=`perspective(900px) rotateX(${(.5-y)*9}deg) rotateY(${(x-.5)*11}deg) translateZ(0)`;el.style.setProperty('--mx',x*100+'%');el.style.setProperty('--my',y*100+'%')});
+  el.addEventListener('pointerleave',()=>{el.style.transform=''});
+ });
+}
+
+function onScroll(){
+ const h=document.documentElement; const max=h.scrollHeight-innerHeight; const p=max>0?scrollY/max:0;
+ $('#progress').style.transform=`scaleX(${p})`;
+}
+addEventListener('scroll',onScroll,{passive:true});
+
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-track]'); if(t)track(t.dataset.track,{page:current});
+ const a=e.target.closest('a[data-link]');
+ if(a){e.preventDefault();const f=a.dataset.filter;if(f)window.__wf=f;else if(a.dataset.link==='work')window.__wf='all';navigate(a.dataset.link,{force:true});return}
+ const sc=e.target.closest('[data-scroll]'); if(sc){e.preventDefault();const el=document.getElementById(sc.dataset.scroll);if(el)el.scrollIntoView({behavior:RM?'auto':'smooth'});return}
+ if(e.target.closest('[data-skip]')){e.preventDefault();$('#main').scrollIntoView();return}
+ const chip=e.target.closest('.chip'); if(chip){ if(chip.dataset.f)applyFilter(chip.dataset.f); if(chip.dataset.ic)renderInsights(chip.dataset.ic); return}
+ const nd=e.target.closest('#lp .nd'); if(nd){stopLoop();showLoop(+nd.dataset.i);return}
+ const cp=e.target.closest('[data-copy]'); if(cp){try{navigator.clipboard.writeText(cp.dataset.copy).then(()=>cp.textContent='Copied',()=>{cp.textContent='Select text'})}catch(err){cp.textContent='Select text'}return}
+ if(e.target.closest('#burger')){const n=$('#nav');const o=n.classList.toggle('open');$('#burger').setAttribute('aria-expanded',String(o));$('#burger').textContent=o?'CLOSE −':'MENU +';return}
+});
+document.addEventListener('pointerover',e=>{if(e.target.closest&&e.target.closest('[data-hover]')){try{GL&&GL.pulse()}catch(err){}}});
+addEventListener('hashchange',()=>{const t=location.hash.slice(1);if(t&&t!==current&&BUILD[t])navigate(t)});
+
+/* form */
+document.addEventListener('focusin',e=>{if(e.target.closest&&e.target.closest('#cf')&&!window.__cfs){window.__cfs=1;track('contact_form_start')}});
+document.addEventListener('submit',e=>{
+ if(e.target.id!=='cf')return; e.preventDefault();
+ const v=id=>$('#'+id).value.trim(); let ok=true;
+ const bad=(id,cond)=>{const f=$('#f-'+id);if(f)f.classList.toggle('bad',cond);if(cond)ok=false};
+ bad('name',!v('name')); bad('email',!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v('email'))); bad('service',!$('#service').value);
+ const pr=$('#priv').checked; $('#e-priv').style.display=pr?'none':'block'; if(!pr)ok=false;
+ if(!ok){const first=$('#cf .bad input,#cf .bad select')||(!pr&&$('#priv'));if(first)first.focus();return}
+ track('contact_form_submit',{service:$('#service').value,source:'website'});
+ $('#cf').style.display='none'; const o=$('#cok'); o.classList.add('show'); o.scrollIntoView({block:'center'});
+});
+
+/* ============ 3D ============ */
+let GL=null;
+function initGL(){
+ if(typeof THREE==='undefined')throw new Error('no three');
+ const canvas=$('#gl');
+ const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+ renderer.setPixelRatio(Math.min(devicePixelRatio||1,2)); renderer.setClearColor(0x000000,0);
+ const scene=new THREE.Scene();
+ const camera=new THREE.PerspectiveCamera(45,1,0.1,100); camera.position.set(0,0,9);
+ const VIOLET=0x8b72ff,CYAN=0x00d9ff,ICE=0xf4f6fc;
+ const mobile=matchMedia('(max-width:760px)').matches;
+
+ function glowTex(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d');const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.25,'rgba(255,255,255,.5)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c)}
+ const GT=glowTex();
+
+ // stars
+ const SN=mobile?900:1800, sp=new Float32Array(SN*3), sc=new Float32Array(SN*3);
+ for(let i=0;i<SN;i++){const r=9+Math.random()*34,t=Math.random()*6.283,u=Math.random()*2-1,s=Math.sqrt(1-u*u);sp[i*3]=r*s*Math.cos(t);sp[i*3+1]=r*u;sp[i*3+2]=r*s*Math.sin(t)-6;
+  const c=new THREE.Color([ICE,VIOLET,CYAN,ICE][i%4]);const k=.4+Math.random()*.6;sc[i*3]=c.r*k;sc[i*3+1]=c.g*k;sc[i*3+2]=c.b*k}
+ const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));sg.setAttribute('color',new THREE.BufferAttribute(sc,3));
+ const stars=new THREE.Points(sg,new THREE.PointsMaterial({size:.045,map:GT,vertexColors:true,transparent:true,opacity:.9,depthWrite:false,blending:THREE.AdditiveBlending}));
+ scene.add(stars);
+
+ // lights (for the logo feature)
+ scene.add(new THREE.AmbientLight(0xffffff,.45));
+ const l1=new THREE.PointLight(VIOLET,2.2,30);l1.position.set(4,3,6);scene.add(l1);
+ const l2=new THREE.PointLight(CYAN,1.8,30);l2.position.set(-5,-3,5);scene.add(l2);
+
+ // anchor group: moves/scales per route and scroll
+ const anchor=new THREE.Group();scene.add(anchor);
+ const sys=new THREE.Group();anchor.add(sys);
+
+ // core planet
+ const coreMat=new THREE.ShaderMaterial({transparent:true,uniforms:{uTime:{value:0},uVis:{value:1},uA:{value:new THREE.Color(VIOLET)},uB:{value:new THREE.Color(CYAN)}},
+  vertexShader:'varying vec3 vN;varying vec3 vV;varying vec3 vP;void main(){vN=normalize(normalMatrix*normal);vec4 mv=modelViewMatrix*vec4(position,1.0);vV=normalize(-mv.xyz);vP=position;gl_Position=projectionMatrix*mv;}',
+  fragmentShader:'uniform float uTime;uniform float uVis;uniform vec3 uA;uniform vec3 uB;varying vec3 vN;varying vec3 vV;varying vec3 vP;'+
+  'float h(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,37.719)))*43758.5453);}'+
+  'float n(vec3 p){vec3 i=floor(p);vec3 f=fract(p);f=f*f*(3.0-2.0*f);'+
+  'return mix(mix(mix(h(i),h(i+vec3(1.0,0.0,0.0)),f.x),mix(h(i+vec3(0.0,1.0,0.0)),h(i+vec3(1.0,1.0,0.0)),f.x),f.y),mix(mix(h(i+vec3(0.0,0.0,1.0)),h(i+vec3(1.0,0.0,1.0)),f.x),mix(h(i+vec3(0.0,1.0,1.0)),h(i+vec3(1.0,1.0,1.0)),f.x),f.y),f.z);}'+
+  'void main(){float fr=pow(1.0-max(dot(normalize(vN),normalize(vV)),0.0),2.4);float t=uTime*0.15;'+
+  'float b=n(vP*2.2+vec3(t,0.0,t))*0.6+n(vP*5.0+vec3(0.0,t*2.0,0.0))*0.4;'+
+  'vec3 base=mix(vec3(0.05,0.04,0.14),uA*0.6,b);vec3 col=base+uA*fr*1.1+uB*pow(fr,4.0)*0.9;'+
+  'gl_FragColor=vec4(col,uVis);}'});
+ const core=new THREE.Mesh(new THREE.SphereGeometry(.95,64,64),coreMat);sys.add(core);
+ const haloMat=new THREE.ShaderMaterial({transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending,depthWrite:false,uniforms:{uVis:{value:1},uC:{value:new THREE.Color(VIOLET)}},
+  vertexShader:'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+  fragmentShader:'uniform float uVis;uniform vec3 uC;varying vec3 vN;void main(){float i=pow(max(0.62-dot(vN,vec3(0.0,0.0,1.0)),0.0),3.0);gl_FragColor=vec4(uC,min(i*0.55,1.0)*uVis);}'});
+ const halo=new THREE.Mesh(new THREE.SphereGeometry(1.35,48,48),haloMat);sys.add(halo);
+
+ // rings, nodes, dust
+ const rings=[];
+ [[1.75,[1.15,0.2,0.0],.22,VIOLET,CYAN],[2.35,[0.35,0.55,0.4],-.15,CYAN,VIOLET],[3.0,[0.9,-0.4,-0.3],.09,ICE,VIOLET]].forEach(([r,rot,spd,col,ncol],i)=>{
+  const tilt=new THREE.Group();tilt.rotation.set(rot[0],rot[1],rot[2]);sys.add(tilt);
+  const pivot=new THREE.Group();tilt.add(pivot);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(r,.0065,8,220),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.55}));pivot.add(ring);
+  const node=new THREE.Mesh(new THREE.SphereGeometry(.07+.02*(2-i)*.5,16,16),new THREE.MeshBasicMaterial({color:ncol}));node.position.set(r,0,0);pivot.add(node);
+  const spr=new THREE.Sprite(new THREE.SpriteMaterial({map:GT,color:ncol,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false}));spr.scale.set(.7,.7,1);node.add(spr);
+  const DN=mobile?90:200,dp=new Float32Array(DN*3);
+  for(let k=0;k<DN;k++){const a=Math.random()*6.283,rr=r+(Math.random()-.5)*.28;dp[k*3]=Math.cos(a)*rr;dp[k*3+1]=Math.sin(a)*rr;dp[k*3+2]=(Math.random()-.5)*.18}
+  const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+  pivot.add(new THREE.Points(dg,new THREE.PointsMaterial({size:.05,map:GT,color:col,transparent:true,opacity:.8,depthWrite:false,blending:THREE.AdditiveBlending})));
+  rings.push({pivot,spd});
+ });
+
+ // ===== feature objects =====
+ const features={};
+ function mkFeature(name,build){
+  try{const g=new THREE.Group(),mats=[];const reg=(m,o)=>{m.transparent=true;m.opacity=0;mats.push([m,o]);return m};
+   const upd=build(g,reg)||(()=>{});g.visible=false;anchor.add(g);features[name]={g,mats,upd,vis:0}}catch(e){console.warn('feature failed',name,e)}
+ }
+ const lineM=(c,o,reg)=>reg(new THREE.LineBasicMaterial({color:c}),o);
+ const basicM=(c,o,reg,wire)=>reg(new THREE.MeshBasicMaterial({color:c,wireframe:!!wire}),o);
+
+ mkFeature('films',(g,reg)=>{
+  const reel=new THREE.Group();g.add(reel);
+  const disc=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,.14,56,1),basicM(VIOLET,.55,reg,true));disc.rotation.x=Math.PI/2;reel.add(disc);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(1.35,.02,8,100),basicM(ICE,.9,reg));rim.position.z=.08;reel.add(rim);
+  const rim2=rim.clone();rim2.position.z=-.08;reel.add(rim2);
+  for(let i=0;i<6;i++){const a=i/6*6.283;[.09,-.09].forEach(z=>{const h=new THREE.Mesh(new THREE.TorusGeometry(.3,.014,8,40),basicM(CYAN,.9,reg));h.position.set(Math.cos(a)*.78,Math.sin(a)*.78,z);reel.add(h)})}
+  const hub=new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.3,24),basicM(CYAN,.8,reg,true));hub.rotation.x=Math.PI/2;reel.add(hub);
+  const curve=new THREE.CatmullRomCurve3([new THREE.Vector3(1.2,-.6,0),new THREE.Vector3(2.0,-1.5,.3),new THREE.Vector3(1.0,-2.3,.9),new THREE.Vector3(-.6,-2.2,.4),new THREE.Vector3(-1.7,-1.3,-.2)]);
+  const pts=curve.getPoints(60),pos=[],ticks=[];
+  for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1];pos.push(a.x,a.y,a.z+.2,b.x,b.y,b.z+.2,a.x,a.y,a.z-.2,b.x,b.y,b.z-.2);
+   if(i%2===0)ticks.push(a.x,a.y,a.z+.2,a.x,a.y,a.z-.2)}
+  const sg2=new THREE.BufferGeometry();sg2.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.add(new THREE.LineSegments(sg2,lineM(VIOLET,.9,reg)));
+  const tg=new THREE.BufferGeometry();tg.setAttribute('position',new THREE.Float32BufferAttribute(ticks,3));g.add(new THREE.LineSegments(tg,lineM(CYAN,.8,reg)));
+  g.rotation.set(.35,-.5,0);
+  return t=>{reel.rotation.z=-t*.5}
+ });
+ mkFeature('creative',(g,reg)=>{
+  const k=new THREE.Mesh(new THREE.TorusKnotGeometry(1.0,.3,180,18,2,3),basicM(VIOLET,.6,reg,true));g.add(k);
+  const p=new THREE.Points(new THREE.TorusKnotGeometry(1.0,.3,120,10,2,3),reg(new THREE.PointsMaterial({color:CYAN,size:.045,map:GT,depthWrite:false,blending:THREE.AdditiveBlending}),1));g.add(p);
+  const o=new THREE.Mesh(new THREE.OctahedronGeometry(.32,0),basicM(ICE,.9,reg,true));g.add(o);
+  return t=>{g.rotation.y=t*.35;g.rotation.x=Math.sin(t*.4)*.3;o.rotation.y=-t*1.2;o.rotation.x=t*.8}
+ });
+ mkFeature('digital',(g,reg)=>{
+  const layers=[];
+  for(let i=0;i<4;i++){const e=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(2.7,1.7,.02)),lineM(i===3?CYAN:VIOLET,i===3?1:.7,reg));e.position.z=(i-1.5)*.5;g.add(e);
+   const f=new THREE.Mesh(new THREE.PlaneGeometry(2.7,1.7),basicM(VIOLET,.07+i*.02,reg));f.position.z=(i-1.5)*.5;g.add(f);layers.push(e)}
+  const ui=[[-.7,.45,.9,.5],[.55,.5,.7,.3],[-.7,-.2,.9,.14],[.1,-.45,1.8,.14]];const pos=[];
+  ui.forEach(([x,y,w,h])=>{const a=x-w/2+.0,b=x+w/2,c=y-h/2,d=y+h/2;pos.push(a,c,0,b,c,0,b,c,0,b,d,0,b,d,0,a,d,0,a,d,0,a,c,0)});
+  const ug=new THREE.BufferGeometry();ug.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));const uis=new THREE.LineSegments(ug,lineM(ICE,.9,reg));uis.position.z=.75;g.add(uis);
+  g.rotation.set(.3,-.55,0);
+  return t=>{g.rotation.y=-.55+Math.sin(t*.5)*.25;layers.forEach((l,i)=>{l.position.z=(i-1.5)*(.5+Math.sin(t*.9)*.08)})}
+ });
+ mkFeature('intel',(g,reg)=>{
+  const N=36,P=[];for(let i=0;i<N;i++){const y=1-i/(N-1)*2,r=Math.sqrt(1-y*y),a=i*2.399963;const j=1.4+Math.sin(i*7.3)*.18;P.push(new THREE.Vector3(Math.cos(a)*r*j,y*j,Math.sin(a)*r*j))}
+  const pg=new THREE.BufferGeometry().setFromPoints(P);g.add(new THREE.Points(pg,reg(new THREE.PointsMaterial({color:CYAN,size:.16,map:GT,depthWrite:false,blending:THREE.AdditiveBlending}),1)));
+  const E=[],pos=[];for(let i=0;i<N;i++)for(let j=i+1;j<N;j++)if(P[i].distanceTo(P[j])<1.05){E.push([i,j]);pos.push(P[i].x,P[i].y,P[i].z,P[j].x,P[j].y,P[j].z)}
+  const lg=new THREE.BufferGeometry();lg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.add(new THREE.LineSegments(lg,lineM(VIOLET,.55,reg)));
+  const pulses=[];for(let i=0;i<10;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(.05,10,10),basicM(ICE,1,reg));g.add(m);pulses.push({m,e:E[(i*7)%E.length],t:Math.random(),s:.4+Math.random()*.5})}
+  return (t,dt)=>{g.rotation.y=t*.2;g.rotation.x=Math.sin(t*.3)*.2;pulses.forEach(p=>{p.t+=dt*p.s;if(p.t>1){p.t=0;p.e=E[Math.floor(Math.random()*E.length)]}p.m.position.lerpVectors(P[p.e[0]],P[p.e[1]],p.t)})}
+ });
+ mkFeature('logo',(g,reg)=>{
+  const std=(c,e)=>reg(new THREE.MeshStandardMaterial({color:c,emissive:e,emissiveIntensity:.5,metalness:.55,roughness:.28}),1);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(1.0,.26,40,120),std(0xf4f6fc,0x2a2260));g.add(ring);
+  const orbG=new THREE.Group();orbG.rotation.z=-.49;g.add(orbG);
+  const orb=new THREE.Mesh(new THREE.TorusGeometry(1.9,.022,10,200),basicM(VIOLET,1,reg));orb.scale.y=.39;orbG.add(orb);
+  const nd=new THREE.Mesh(new THREE.SphereGeometry(.14,24,24),std(CYAN,CYAN));g.add(nd);
+  return t=>{g.rotation.y=Math.sin(t*.5)*.5;g.rotation.x=Math.sin(t*.35)*.18;nd.position.set(Math.cos(t*.9)*1.9,Math.sin(t*.9)*1.9*.39,0);nd.position.applyAxisAngle(new THREE.Vector3(0,0,1),-.49)}
+ });
+
+ // route state
+ const st={mode:'home',feat:null,tx:0,ty:0,ts:1,canvasOp:1,kick:0,boost:0,coreVis:1,scrollY:0};
+ const cur={x:0,y:0,s:1};
+ let mx=0,my=0,tmx=0,tmy=0,fov=45;
+ addEventListener('pointermove',e=>{tmx=(e.clientX/innerWidth)*2-1;tmy=(e.clientY/innerHeight)*2-1},{passive:true});
+
+ function layout(){
+  const w=innerWidth,h=innerHeight,asp=w/h;renderer.setSize(w,h,false);camera.aspect=asp;camera.updateProjectionMatrix();
+  const half=Math.tan(22.5*Math.PI/180)*9; st.half=half; st.asp=asp;
+ }
+ function target(){
+  const half=st.half,asp=st.asp,wide=asp>1.05;const hero=st.mode==='home'||st.feat;
+  let x,y,s;
+  if(wide){x=half*asp*.42;y=-.1;s=Math.min(1,asp*.62)*(hero?1:.62)}
+  else{x=0;y=hero?-half*.28:half*.45;s=Math.min(.6,asp*1.0)*(hero?1:.7)}
+  if(st.mode==='home'){const sc=st.scrollY/innerHeight;const k=Math.min(sc,1.6);
+   if(wide){x*=Math.cos(sc*.9);y+=Math.sin(sc*.7)*.5;s*=1-Math.min(k,1.2)*.35}else{y=-half*.28+Math.min(sc,1)*half*.6;s*=1-Math.min(k,1)*.4}}
+  st.tx=x;st.ty=y;st.ts=s;
+  st.canvasOp=(st.mode==='home'||st.feat)?(wide?1:.8):(wide?.5:.28);
+ }
+ const warm=!RM;
+ let last=performance.now(),T=0,visible=true;
+ document.addEventListener('visibilitychange',()=>{visible=!document.hidden;last=performance.now()});
+ function frame(now){
+  requestAnimationFrame(frame);if(!visible)return;
+  const dt=Math.min((now-last)/1000,.05);last=now;const sp=RM?.12:1;T+=dt*sp;
+  mx+=(tmx-mx)*.05;my+=(tmy-my)*.05;
+  st.kick*=Math.pow(.02,dt);st.boost*=Math.pow(.05,dt);
+  target();
+  const k=1-Math.pow(.0008,dt);cur.x+=(st.tx-cur.x)*k;cur.y+=(st.ty-cur.y)*k;cur.s+=(st.ts-cur.s)*k;
+  anchor.position.set(cur.x,cur.y,0);anchor.scale.setScalar(cur.s);
+  sys.rotation.y=mx*.28+Math.sin(T*.2)*.1;sys.rotation.x=my*.18+.12;sys.rotation.z=-.1+T*.0+st.kick*.0;
+  const boost=1+st.boost*6+st.kick*10;
+  rings.forEach((r,i)=>{r.pivot.rotation.z+=r.spd*dt*sp*boost});
+  coreMat.uniforms.uTime.value=T;core.rotation.y=T*.12;
+  const wantCore=st.feat?0:1;st.coreVis+=(wantCore-st.coreVis)*.06;coreMat.uniforms.uVis.value=st.coreVis;haloMat.uniforms.uVis.value=st.coreVis;core.visible=halo.visible=st.coreVis>.01;
+  stars.rotation.y=T*.012+mx*.03;stars.rotation.x=my*.02;stars.position.y=-st.scrollY*.0012;
+  for(const n in features){const f=features[n];const want=st.feat===n?1:0;f.vis+=(want-f.vis)*.07;
+   f.g.visible=f.vis>.01;if(!f.g.visible)continue;
+   f.mats.forEach(([m,o])=>{m.opacity=o*f.vis});
+   f.g.scale.setScalar(.55+.45*f.vis);
+   f.g.position.y=Math.sin(T*.8)*.08;
+   f.upd(T,dt*sp);
+   f.g.rotation.y+=mx*.0;
+  }
+  fov+=((45+st.kick*22)-fov)*.2;if(Math.abs(camera.fov-fov)>.01){camera.fov=fov;camera.updateProjectionMatrix()}
+  camera.position.x+=((mx*.35)-camera.position.x)*.04;camera.position.y+=((-my*.25)-camera.position.y)*.04;camera.lookAt(0,0,0);
+  canvas.style.opacity=canvas.__op=(canvas.__op==null?st.canvasOp:canvas.__op+(st.canvasOp-canvas.__op)*.06);
+  renderer.render(scene,camera);
+ }
+ layout();addEventListener('resize',layout);
+ addEventListener('scroll',()=>{st.scrollY=scrollY;st.boost=Math.min(st.boost+.02,.5)},{passive:true});
+ requestAnimationFrame(frame);
+ return{
+  route(tok,feat){st.mode=tok==='home'?'home':'page';st.feat=feat&&features[feat]?feat:null;st.kick=warm?1:0;st.scrollY=0},
+  pulse(){st.boost=Math.min(st.boost+.25,.8)}
+ };
+}
+
+/* ============ BOOT ============ */
+function boot(){
+ $('#logo-mark').innerHTML=logoMark(); $('#foot-logo').innerHTML=logoMark()+'ORBIT<sup>®</sup>';
+ $('#dd-menu').innerHTML=SERVICES.map(s=>`<a href="#${s.id}" data-link="${s.id}"><b style="font-weight:500">${s.name} ${s.em}</b><small>${s.short}</small></a>`).join('')+`<a href="#services" data-link="services"><small style="color:var(--cyan)">All services →</small></a>`;
+ $('#foot-svc').innerHTML=SERVICES.map(s=>`<li><a href="#${s.id}" data-link="${s.id}">${s.name} ${s.em}</a></li>`).join('');
+ $('#foot-contact').innerHTML=`<li><a href="#contact" data-link="contact">Start a project</a></li>`+(CONFIG.email?`<li>${esc(CONFIG.email)}</li>`:`<li class="muted">Contact email to be confirmed</li>`)+CONFIG.social.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join('');
+ $('#year').textContent=new Date().getFullYear();
+ if('IntersectionObserver' in window&&!RM)io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target)}}),{threshold:.08,rootMargin:'0px 0px -4% 0px'});
+ mountPages();
+ try{GL=initGL()}catch(e){console.warn('3D unavailable',e);document.documentElement.classList.add('no-webgl')}
+ bindTilt();
+ const start=(location.hash||'').slice(1);
+ navigate(BUILD[start]?start:'home',{silent:true,force:true});
+ const L=$('#loader');
+ if(RM){L.classList.add('done')}else{setTimeout(()=>L.classList.add('done'),2100);setTimeout(()=>{L.style.display='none'},3200)}
+}
+boot();
+</script>
+
+</body></html>
